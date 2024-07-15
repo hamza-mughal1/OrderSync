@@ -7,15 +7,6 @@ class Database:
     """
     A class to interact with a MySQL database for handling product, orders, sales, and everything.
     """
-    @staticmethod
-    def generate_hashed_password(salt, password):
-        # Hash the password with the generated salt
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
-
-        # Convert the hashed password to a string for storage
-        hashed_password_str = hashed_password.decode('utf-8')
-        return hashed_password_str
-
     def __init__(self, host, user, password, database):
         """
         Initialize the database connection and cursor.
@@ -27,6 +18,15 @@ class Database:
             database=database
         )
         self.mycursor = self.db.cursor()
+
+    @staticmethod
+    def generate_hashed_password(password):
+        """
+        Generate a hashed password with a salt.
+        """
+        salt = bcrypt.gensalt()
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+        return hashed_password.decode('utf-8')
 
     def all_products(self, limit=1000, offset=0):
         """
@@ -51,16 +51,16 @@ class Database:
                 "product_price": result[3]
             }
         
-        return json.dumps(products_dic)
+        return 200, products_dic
 
     def place_order(self, sale):
         """
         Place an order based on the given sale data.
 
         Args:
-        - sale (str): JSON-formatted string containing sale details.
+        - sale dict.
 
-        structure (json): 
+        structure : 
         sale = {
             "user_id" : --,
             "products": [{
@@ -83,8 +83,6 @@ class Database:
         Returns:
         - None
         """
-        sale = json.loads(sale)
-
         insert_to_sales_detail = []
         total_price = 0 
 
@@ -156,7 +154,7 @@ class Database:
                 "sale_discount_description": i[6]
             }
 
-        return json.dumps(sales_dic)
+        return 200, sales_dic
 
     def product_add(self, product_info, add_by_cateogry_id = False):
         """
@@ -175,7 +173,8 @@ class Database:
             self.mycursor.execute(f"INSERT INTO products (category_id, name, price) value ((SELECT id FROM CATEGORY WHERE NAME = {product_info["category_name"]}), {product_info ["name"]}, {product_info["price"]})")
 
         self.db.commit()
-
+        return 201, "Product added successfully"
+            
     def product_delete(self, product_details):
         product_id = json.loads(product_details)["product_id"]
 
@@ -232,13 +231,23 @@ class Database:
             "password": --,        
         }
         """
-        user_details = json.loads(user_details)
-        hashed_pass = Database.generate_hashed_password(print(open("salt.txt").readline()), user_details["password"])
-        self.mycursor.execute(f"INSERT INTO users (name, user_name, password) value ('{user_details["name"]}', '{user_details["user_name"]}', '{hashed_pass}')")
-
-        self.db.commit()
-
-        return True, "user has been created successfully!"
+        try:
+            user_details = json.loads(user_details)
+        except AttributeError:
+            return 400, "Bad request (Incorrect parameters)" 
+        try:
+            hashed_pass = Database.generate_hashed_password(open("salt.txt").readline(), user_details["password"])
+        except (KeyError, TypeError):
+            return 400, "Bad request (Incomplete parameters)"
+        except:
+            return 500, "Internal server error"
+           
+        try:
+            self.mycursor.execute(f"INSERT INTO users (name, user_name, password) value ('{user_details["name"]}', '{user_details["user_name"]}', '{hashed_pass}')")
+            self.db.commit()
+            return 201, "User registered successfully"
+        except mysql.connector.errors.IntegrityError:
+            return 409, "Username already exists"             
     
     def verify_user(self, user_details):
         """
@@ -247,12 +256,19 @@ class Database:
             "password": --,        
         }
         """
-        user_details = json.loads(user_details)
-        self.mycursor.execute(f"SELECT password FROM users WHERE user_name = '{user_details["user_name"]}'")
-        if bcrypt.checkpw(user_details["password"].encode("utf-8"), list(self.mycursor)[0][0].encode("utf-8")):
-            print("logined!") # just for testing
-        else:
-            print("wrong credentials!") # just for testing
+        try:
+            user_details = json.loads(user_details)
+            self.mycursor.execute(f"SELECT password FROM users WHERE user_name = '{user_details["user_name"]}'")
+            if bcrypt.checkpw(user_details["password"].encode("utf-8"), list(self.mycursor)[0][0].encode("utf-8")):
+                return 200, "Successfully logged in!"
+            else:
+                return 401, "Wrong credentials!"
+        except KeyError:
+            return 400, "Bad request (incomplete parameters)"
+        except IndexError:
+            return 401, "Wrong credentials!"
+        except:
+            return 400, "Bad request"
 
 if __name__ == "__main__":
     # Initialize Database instance
@@ -263,6 +279,9 @@ if __name__ == "__main__":
         database="ordersync"
     )
 
+
+    print(mydb.all_products()[1])
+
     # Print all sales data
     # pprint(json.loads(mydb.all_sales()), sort_dicts=False)
     # mydb.product_delete(json.dumps(
@@ -270,28 +289,35 @@ if __name__ == "__main__":
     #     ))
 
     # Example of placing an order (commented out)
-    sale = {
-        "user_id": 1,
-        "products": [{
-            "product_name": "Cookies",
-            "quantity": 5,
-            "product_discount_per": 0,
-            "product_discount_desc": "None"
-        },
-        {
-            "product_name": "Vanilla Ice Cream",
-            "quantity": 3,
-            "product_discount_per": 0,
-            "product_discount_desc": "None"
-        }],
-        "sale_discount_per": 0,
-        "sale_discount_desc": "None"
-    }
+    # sale = {
+    #     "user_id": 1,
+    #     "products": [{
+    #         "product_name": "Cookies",
+    #         "quantity": 5,
+    #         "product_discount_per": 0,
+    #         "product_discount_desc": "None"
+    #     },
+    #     {
+    #         "product_name": "Vanilla Ice Cream",
+    #         "quantity": 3,
+    #         "product_discount_per": 0,
+    #         "product_discount_desc": "None"
+    #     }],
+    #     "sale_discount_per": 0,
+    #     "sale_discount_desc": "None"
+    # }
 
     # mydb.place_order(json.dumps(sale))
 
 
-    mydb.verify_user(json.dumps({
-            "user_name": input(),
-            "password": input()
-    }))
+    # print(mydb.verify_user(json.dumps({
+    #         "user_name": input(),
+    # })))
+
+    # print(mydb.user_create(
+    #     json.dumps({
+    #     "name": "Azan",
+    #     "user_name": "AzanMughal",
+    #     "password": "azan100"
+    # })))
+
