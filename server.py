@@ -29,11 +29,13 @@ class OrderSync(Resource):
 
     def put(self, data_specs):
         print(data_specs)
-        args = parser.parse_args()
-        args = dict(args)
-        json_str = args["data"].replace("'", '"')
-        json_dict = json.loads(json_str)
-        mydb.place_order(json_dict)
+        if data_specs == "place_order":
+            args = parser.parse_args()
+            args = dict(args)
+            json_str = args["data"].replace("'", '"')
+            json_dict = json.loads(json_str)
+            mydb.place_order(json_dict)
+            return {"message": "order has been placed!"}, 201
 
 
 api.add_resource(OrderSync, "/data/<data_specs>")
