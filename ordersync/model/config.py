@@ -5,5 +5,4 @@ db_config = {
     "database": "ordersync",
 }
 
-
 secret_key = "Thisisagreatsecretkey119922"

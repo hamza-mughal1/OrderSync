@@ -17,3 +17,8 @@ def user_login():
 @auth_model.token_auth()
 def get_all_products():
     return "all products"
+
+
+@app.route("/refresh-jwt", methods=["POST"])
+def refresh_jwt():
+    return user_model.refresh_jwt()

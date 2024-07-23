@@ -26,7 +26,7 @@ class AuthModel:
             def wrapper(*args):
                 endpoint = request.url_rule
                 authorization = request.headers.get("authorization")
-                if re.match("^Bearer *([^ ]+) *$", authorization, flags=0) == False:
+                if re.match("^Bearer *([^ ]+) *$", authorization, flags=0) == None:
                     return make_response({"ERROR": "INVALID_TOKEN"}, 401)
 
                 token = authorization.split(" ")[1]
