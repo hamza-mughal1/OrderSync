@@ -21,10 +21,14 @@ class AuthModel:
         self.mycursor = self.db.cursor(dictionary=True)
 
     def token_auth(self, endpoint=""):
+        ed = endpoint
         def decorator(func):
             @wraps(func)
-            def wrapper(*args):
-                endpoint = request.url_rule
+            def wrapper(*args, **kwargs):
+                if ed == "":
+                    endpoint = request.url_rule
+                else:
+                    endpoint = ed
                 authorization = request.headers.get("authorization")
                 try:
                     if re.match("^Bearer *([^ ]+) *$", authorization, flags=0) == None:
@@ -43,7 +47,7 @@ class AuthModel:
 
                 role = tokendata["payload"]["role"]
                 self.mycursor.execute(
-                    f"SELECT role FROM ENDPOINTS WHERE ENDPOINT = '{endpoint}'"
+                    "SELECT role FROM ENDPOINTS WHERE ENDPOINT = %s", (endpoint,)
                 )
                 roles = self.mycursor.fetchall()[0]["role"]
                 roles = json.loads(roles)
@@ -56,7 +60,7 @@ class AuthModel:
                 if len(self.mycursor.fetchall()) >= 1:
                     return make_response({"ERROR": "Forbidden"}, 403)
 
-                return func(*args)
+                return func(*args, **kwargs)
 
             return wrapper
 

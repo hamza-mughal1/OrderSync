@@ -76,20 +76,22 @@ class UserModel:
         
 
         self.mycursor.execute("DELETE FROM available_refresh_token WHERE token = %s", (refresh_token,))
-
+        
         tokendata = tokendata["payload"]
+        self.mycursor.execute("SELECT id, user_role as role FROM users WHERE user_name = %s", (tokendata["user_name"],))
+        data = self.mycursor.fetchall()[0]
         token = UserModel.generate_JWT({
             "user_name":tokendata["user_name"],
-            "id":tokendata["id"],
-            "role":tokendata["role"],
+            "id":data["id"],
+            "role":data["role"],
             "created_at":str(datetime.now()).split(".")[0],
             "token_role":"access-token"},
             self.jwt_time_in_minutes)
         
         refresh_token = UserModel.generate_JWT({
             "user_name":tokendata["user_name"],
-            "id":tokendata["id"],
-            "role":tokendata["role"],
+            "id":data["id"],
+            "role":data["role"],
             "token_role":"refresh-token"},
             self.refresh_token_time_in_days*1440)
     
@@ -203,6 +205,8 @@ class UserModel:
         jwt_tokendata = jwt_tokendata["payload"]
         self.mycursor.execute("DELETE FROM available_refresh_token WHERE user_id = %s", (jwt_tokendata["id"],))
         self.db.commit()
+        self.mycursor.execute("INSERT INTO blacklisted_token (token, user_id, role, created_at) value (%s, %s, %s, %s)", (jwt_token, jwt_tokendata["id"], jwt_tokendata["role"], jwt_tokendata["created_at"]))
+        self.db.commit()
         return make_response({"MESSAGE":"YOU HAVE LOGGED OUT SUCCESSFULLY"}, 200)
 
     def register_user(self, user_details):
@@ -223,3 +227,24 @@ class UserModel:
             return make_response({"MESSAGE":"USER HAS BEEN REGISTERED SUCCESSFULLY"}, 201)
         except mysql.connector.errors.IntegrityError:
             return make_response({"ERROR":"USERNAME ALREADY EXISTS"}, 409)
+        
+    def delete_user(self, user_details):
+        re_fields = {"user_name":"--"}
+        
+        if not UserModel.has_required_pairs(user_details, re_fields):
+            return "Unauthorized", 401
+        
+        self.mycursor.execute("SELECT id FROM users WHERE user_name = %s",(user_details["user_name"],))
+        if len(id := self.mycursor.fetchall())<1:
+            return make_response({"MESSAGE":"NO USER FOUND"}, 400)
+        
+        self.mycursor.execute("SELECT id FROM sales WHERE user_id = (SELECT id FROM users WHERE user_name = %s)",(user_details["user_name"],))
+        all_sales = self.mycursor.fetchall()
+        for i in all_sales:
+            self.mycursor.execute("DELETE FROM sale_details WHERE sale_id = %s", (i["id"],))
+
+        self.db.commit()
+        self.mycursor.execute("DELETE FROM sales WHERE user_id = %s",(id[0]["id"],))
+        self.mycursor.execute("DELETE FROM users WHERE user_name = %s", (user_details["user_name"],))
+        self.db.commit()
+        return make_response({"MESSAGE":"USER HAS BEEN DELETED SUCCESSFULLY"}, 200)

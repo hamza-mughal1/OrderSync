@@ -36,3 +36,9 @@ def logout_all():
 @auth_model.token_auth()
 def register_user():
     return user_model.register_user(request.json)
+
+
+@app.route("/delete-user", methods=["DELETE"])
+@auth_model.token_auth()
+def delete_user():
+    return user_model.delete_user(request.json)

@@ -18,6 +18,7 @@ class Database:
             database=database
         )
         self.mycursor = self.db.cursor()
+        
 
     @staticmethod
     def generate_hashed_password(password):
@@ -280,7 +281,7 @@ if __name__ == "__main__":
     )
 
 
-    print(mydb.all_products()[1])
+    # print(mydb.all_products()[1])
 
     # Print all sales data
     # pprint(json.loads(mydb.all_sales()), sort_dicts=False)
@@ -289,25 +290,25 @@ if __name__ == "__main__":
     #     ))
 
     # Example of placing an order (commented out)
-    # sale = {
-    #     "user_id": 1,
-    #     "products": [{
-    #         "product_name": "Cookies",
-    #         "quantity": 5,
-    #         "product_discount_per": 0,
-    #         "product_discount_desc": "None"
-    #     },
-    #     {
-    #         "product_name": "Vanilla Ice Cream",
-    #         "quantity": 3,
-    #         "product_discount_per": 0,
-    #         "product_discount_desc": "None"
-    #     }],
-    #     "sale_discount_per": 0,
-    #     "sale_discount_desc": "None"
-    # }
+    sale = {
+        "user_id": 14,
+        "products": [{
+            "product_name": "Coffee",
+            "quantity": 5,
+            "product_discount_per": 0,
+            "product_discount_desc": "None"
+        },
+        {
+            "product_name": "Chips",
+            "quantity": 3,
+            "product_discount_per": 0,
+            "product_discount_desc": "None"
+        }],
+        "sale_discount_per": 0,
+        "sale_discount_desc": "None"
+    }
 
-    # mydb.place_order(json.dumps(sale))
+    mydb.place_order(sale)
 
 
     # print(mydb.verify_user(json.dumps({
