@@ -26,14 +26,20 @@ class AuthModel:
             def wrapper(*args):
                 endpoint = request.url_rule
                 authorization = request.headers.get("authorization")
-                if re.match("^Bearer *([^ ]+) *$", authorization, flags=0) == None:
-                    return make_response({"ERROR": "INVALID_TOKEN"}, 401)
+                try:
+                    if re.match("^Bearer *([^ ]+) *$", authorization, flags=0) == None:
+                        return make_response({"ERROR": "INVALID_TOKEN"}, 401)
+                except TypeError:
+                    return make_response({"ERROR": "TOKEN NOT FOUND"}, 400)
 
                 token = authorization.split(" ")[1]
                 try:
                     tokendata = jwt.decode(token, secret_key, algorithms="HS256")
                 except Exception as e:
                     return make_response({"ERROR": str(e)}, 401)
+
+                if tokendata["payload"]["token_role"] != "access-token":
+                    return make_response({"ERROR": "Forbidden"}, 403)
 
                 role = tokendata["payload"]["role"]
                 self.mycursor.execute(
@@ -42,6 +48,12 @@ class AuthModel:
                 roles = self.mycursor.fetchall()[0]["role"]
                 roles = json.loads(roles)
                 if (role in roles) == False:
+                    return make_response({"ERROR": "Forbidden"}, 403)
+
+                self.mycursor.execute(
+                    "SELECT * FROM blacklisted_token WHERE token = %s", (token,)
+                )
+                if len(self.mycursor.fetchall()) >= 1:
                     return make_response({"ERROR": "Forbidden"}, 403)
 
                 return func(*args)

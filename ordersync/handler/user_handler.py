@@ -22,3 +22,17 @@ def get_all_products():
 @app.route("/refresh-jwt", methods=["POST"])
 def refresh_jwt():
     return user_model.refresh_jwt()
+
+
+@app.route("/logout")
+def logout():
+    return user_model.logout()
+
+@app.route("/logout-all")
+def logout_all():
+    return user_model.logout_all()
+
+@app.route("/register-user", methods=["POST"])
+@auth_model.token_auth()
+def register_user():
+    return user_model.register_user(request.json)
