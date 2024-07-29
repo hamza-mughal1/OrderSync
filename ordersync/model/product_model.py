@@ -1,7 +1,6 @@
 import mysql.connector
 from model.config import *
-from flask import make_response, request
-from pprint import pprint
+from flask import make_response
 
 class ProductModel:
     def __init__(self):
@@ -102,7 +101,43 @@ class ProductModel:
         if not ProductModel.has_required_pairs(product_details, re_fields):
             return make_response({"ERROR":"UNAUTHORIZED"}, 401)
         
-        self.mycursor.execute("INSERT INTO products (category_id, name, price) value ((SELECT id FROM CATEGORY WHERE NAME = %s),%s,%s)",(product_details["category_name"], product_details["name"],product_details["price"]))
-
+        try:
+            self.mycursor.execute("INSERT INTO products (category_id, name, price) value ((SELECT id FROM CATEGORY WHERE NAME = %s),%s,%s)",(product_details["category_name"], product_details["name"],product_details["price"]))
+        except:
+            return make_response({"ERROR":"ERROR WITH THE PARAMETERS"}, 401)
         self.db.commit()
         return make_response({"MESSAGE":"PRODUCT HAS BEEN ADDED SUCCESSFULLY"}, 201) 
+    
+    def delete_product(self, product_details):
+        re_fields = {
+            "name" : "--"
+        }
+
+        if not ProductModel.has_required_pairs(product_details, re_fields):
+            return make_response({"ERROR":"UNAUTHORIZED"}, 401)
+        
+        try:
+            self.mycursor.execute("SELECT id FROM products WHERE name = %s",(product_details["name"],))
+            id = self.mycursor.fetchall()[0]["id"]
+        except:
+            return make_response({"ERROR":"PRODUCT NOT FOUND"}, 404)
+        
+        try:
+            self.mycursor.execute("SELECT sale_id, price, discount_price FROM sale_details where product_id = %s",(id,))
+            result = self.mycursor.fetchall()
+            self.mycursor.execute("DELETE FROM sale_details WHERE product_id = %s", (id,))
+            for i in result:
+                self.mycursor.execute("UPDATE sales SET price = price - %s where id = %s", (i["price"], i["sale_id"]))
+                self.db.commit()
+                self.mycursor.execute("SELECT price, discount from sales where id = %s"(i[0],))
+                price = self.mycursor.fetchall()[0]["price"]
+                discount_per = self.mycursor.fetchall()[0]["discount"]
+                discount_price = price*(discount_per/100)
+                self.mycursor.execute("UPDATE sales SET discount_price = %s where id = %s",(discount_price, i[0]))
+                self.db.commit()
+        except:
+            return make_response({"ERROR":"INTERNAL SERVER ERROR"}, 500)
+        self.mycursor.execute("DELETE FROM products WHERE id = %s",(id,))
+        self.db.commit()
+        return make_response({"MESSAGE":"PRODUCT HAS BEEN DELETED SUCCESSFULLY"}, 201)         
+

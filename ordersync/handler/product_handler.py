@@ -1,5 +1,5 @@
 from app import app
-from flask import request, make_response
+from flask import request
 from model.product_model import ProductModel
 from model.auth_model import AuthModel
 
@@ -16,3 +16,7 @@ def all_products(page):
 @app.route("/place-order", methods=["POST"])
 def place_order():
     return product_model.place_order(request.json)
+
+@app.route("/delete-product", methods=["DELETE"])
+def delete_product():
+    return product_model.delete_product(request.json)

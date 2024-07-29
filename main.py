@@ -175,7 +175,7 @@ class Database:
 
         self.db.commit()
         return 201, "Product added successfully"
-            
+
     def product_delete(self, product_details):
         product_id = json.loads(product_details)["product_id"]
 
@@ -195,7 +195,7 @@ class Database:
 
         self.mycursor.execute(f"DELETE FROM products WHERE id = {product_id}")
         self.db.commit()
-               
+
     def product_update_name(self, product_details, update_by_id = False):
         """
         product_details = {
