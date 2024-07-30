@@ -40,14 +40,14 @@ class AuthModel:
                 try:
                     tokendata = jwt.decode(token, secret_key, algorithms="HS256")
                 except Exception as e:
-                    return make_response({"ERROR": str(e)}, 401)
+                    return make_response({"ERROR": str(e).upper()}, 401)
 
                 if tokendata["payload"]["token_role"] != "access-token":
                     return make_response({"ERROR": "Forbidden"}, 403)
 
                 role = tokendata["payload"]["role"]
                 self.mycursor.execute(
-                    "SELECT role FROM ENDPOINTS WHERE ENDPOINT = %s", (endpoint,)
+                    "SELECT role FROM ENDPOINTS WHERE ENDPOINT = %s", (str(endpoint),)
                 )
                 roles = self.mycursor.fetchall()[0]["role"]
                 roles = json.loads(roles)

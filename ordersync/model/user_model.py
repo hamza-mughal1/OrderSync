@@ -71,9 +71,11 @@ class UserModel:
             return make_response({"ERROR WITH REFRESH TOKEN": str(e)}, 401)
 
         self.mycursor.execute("SELECT * FROM available_refresh_token WHERE token = %s", (refresh_token,))
-        if len(self.mycursor.fetchall())<1:
+        if len(data := self.mycursor.fetchall())<1:
             return make_response({"ERROR WITH REFRESH TOKEN": "BLACKLISTED TOKEN"}, 401)
-        
+
+        if data[0]["jwt_token"] != jwt_token:
+            return make_response({"ERROR WITH JWT": "INVALID_TOKEN"}, 401)
 
         self.mycursor.execute("DELETE FROM available_refresh_token WHERE token = %s", (refresh_token,))
         
@@ -95,8 +97,8 @@ class UserModel:
             "token_role":"refresh-token"},
             self.refresh_token_time_in_days*1440)
     
-        q = "INSERT INTO available_refresh_token (token, user_name, user_id, user_role) values (%s, %s, %s, %s)"
-        self.mycursor.execute(q, (refresh_token, tokendata["user_name"],tokendata["id"],tokendata["role"],))
+        q = "INSERT INTO available_refresh_token (token, user_name, user_id, user_role, jwt_token) values (%s, %s, %s, %s)"
+        self.mycursor.execute(q, (refresh_token, tokendata["user_name"],tokendata["id"],tokendata["role"],token))
         self.db.commit()
 
         return {"jwt-token":token,
@@ -136,8 +138,8 @@ class UserModel:
             "token_role":"refresh-token"},
             self.refresh_token_time_in_days*1440)
         
-        q = "INSERT INTO available_refresh_token (token, user_name, user_id, user_role) values (%s, %s, %s, %s)"
-        self.mycursor.execute(q, (refresh_token, user_details["user_name"], result["id"], result["user_role"],))
+        q = "INSERT INTO available_refresh_token (token, user_name, user_id, user_role, jwt_token) values (%s, %s, %s, %s,%s)"
+        self.mycursor.execute(q, (refresh_token, user_details["user_name"], result["id"], result["user_role"],token))
         self.db.commit()
 
         return {"jwt-token":token,
@@ -203,9 +205,11 @@ class UserModel:
             return make_response({"ERROR WITH REFRESH TOKEN": "BLACKLISTED TOKEN"}, 401)
         
         jwt_tokendata = jwt_tokendata["payload"]
-        self.mycursor.execute("DELETE FROM available_refresh_token WHERE user_id = %s", (jwt_tokendata["id"],))
+        self.mycursor.execute("SELECT jwt_token FROM available_refresh_token WHERE user_id = %s", (jwt_tokendata["id"],))
+        for i in self.mycursor.fetchall():
+            self.mycursor.execute("INSERT INTO blacklisted_token (token, user_id, role, created_at) value (%s, %s, %s, %s)", (i["jwt_token"], jwt_tokendata["id"], jwt_tokendata["role"], jwt_tokendata["created_at"]))
         self.db.commit()
-        self.mycursor.execute("INSERT INTO blacklisted_token (token, user_id, role, created_at) value (%s, %s, %s, %s)", (jwt_token, jwt_tokendata["id"], jwt_tokendata["role"], jwt_tokendata["created_at"]))
+        self.mycursor.execute("DELETE FROM available_refresh_token WHERE user_id = %s", (jwt_tokendata["id"],))
         self.db.commit()
         return make_response({"MESSAGE":"YOU HAVE LOGGED OUT SUCCESSFULLY"}, 200)
 

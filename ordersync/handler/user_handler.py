@@ -24,11 +24,11 @@ def refresh_jwt():
     return user_model.refresh_jwt()
 
 
-@app.route("/logout")
+@app.route("/logout", methods=["POST"])
 def logout():
     return user_model.logout()
 
-@app.route("/logout-all")
+@app.route("/logout-all", methods=["POST"])
 def logout_all():
     return user_model.logout_all()
 

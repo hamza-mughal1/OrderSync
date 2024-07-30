@@ -19,7 +19,6 @@ class Database:
         )
         self.mycursor = self.db.cursor()
         
-
     @staticmethod
     def generate_hashed_password(password):
         """
