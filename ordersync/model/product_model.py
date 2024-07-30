@@ -28,12 +28,7 @@ class ProductModel:
     def place_order(self, sale_details):
         re_fields= {
             "user_id" : "--",
-            "products": [{
-                "product_name": "--",
-                "quantity": "--",
-                "product_discount_per": "--",
-                "product_discount_desc": "--"
-            }],
+            "products": "--",
             "sale_discount_per" : "--",
             "sale_discount_desc": "--"
         }

@@ -17,6 +17,10 @@ def all_products(page):
 def place_order():
     return product_model.place_order(request.json)
 
+@app.route("/add-product", methods=["POST"])
+def add_order():
+    return product_model.add_product(request.json)
+
 @app.route("/delete-product", methods=["DELETE"])
 def delete_product():
     return product_model.delete_product(request.json)

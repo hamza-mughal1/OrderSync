@@ -80,6 +80,7 @@ class UserModel:
         self.mycursor.execute("DELETE FROM available_refresh_token WHERE token = %s", (refresh_token,))
         
         tokendata = tokendata["payload"]
+        print(tokendata)
         self.mycursor.execute("SELECT id, user_role as role FROM users WHERE user_name = %s", (tokendata["user_name"],))
         data = self.mycursor.fetchall()[0]
         token = UserModel.generate_JWT({
@@ -97,7 +98,7 @@ class UserModel:
             "token_role":"refresh-token"},
             self.refresh_token_time_in_days*1440)
     
-        q = "INSERT INTO available_refresh_token (token, user_name, user_id, user_role, jwt_token) values (%s, %s, %s, %s)"
+        q = "INSERT INTO available_refresh_token (token, user_name, user_id, user_role, jwt_token) values (%s, %s, %s, %s, %s)"
         self.mycursor.execute(q, (refresh_token, tokendata["user_name"],tokendata["id"],tokendata["role"],token))
         self.db.commit()
 
