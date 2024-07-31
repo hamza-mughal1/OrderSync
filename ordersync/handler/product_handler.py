@@ -8,19 +8,22 @@ product_model = ProductModel()
 auth_model = AuthModel()
 
 
-@app.route("/all-products/<int:page>")
-@auth_model.token_auth(endpoint="/all-products")
-def all_products(page):
-    return product_model.all_products(page=page)
+@app.route("/products/products", methods=["GET"])
+# @auth_model.token_auth()
+def all_products():
+    return product_model.all_products(page=request.args.get('page', default=0, type=int))
 
-@app.route("/place-order", methods=["POST"])
+@app.route("/products/orders", methods=["POST"])
+@auth_model.token_auth()
 def place_order():
     return product_model.place_order(request.json)
 
-@app.route("/add-product", methods=["POST"])
-def add_order():
+@app.route("/products/products", methods=["POST"])
+@auth_model.token_auth()
+def add_product():
     return product_model.add_product(request.json)
 
-@app.route("/delete-product", methods=["DELETE"])
+@app.route("/products/products", methods=["DELETE"])
+@auth_model.token_auth()
 def delete_product():
     return product_model.delete_product(request.json)

@@ -46,7 +46,6 @@ class ProductModel:
         insert_to_sales_detail = []
         total_price = 0 
 
-        # Retrieve product details and calculate total price
         for i in sale_details["products"]:
             if not ProductModel.has_required_pairs(i, re_prod_fields):
                 return make_response({"ERROR":"UNAUTHORIZED"}, 401)
@@ -67,19 +66,15 @@ class ProductModel:
             ])
             total_price += ((result_cursor["price"] * i["quantity"]) - (i["product_discount_per"] / 100) * (result_cursor["price"] * i["quantity"]))
 
-
-        # Insert sale information into SALES table
         try:
             self.mycursor.execute("INSERT INTO SALES (user_id, price, discount_per, discount_price, discount_des) VALUES (%s,%s,%s,%s,%s)",(sale_details ['user_id'], total_price, sale_details['sale_discount_per'], int((sale_details ['sale_discount_per'] / 100) * total_price), sale_details ['sale_discount_desc']))
         except mysql.connector.errors.IntegrityError:
             return make_response({"ERROR":"USER NOT FOUND"}, 404)
         self.db.commit()
 
-        # Retrieve the ID of the last inserted sale
         self.mycursor.execute("SELECT last_insert_id()")
         sales_id = self.mycursor.fetchall()[0]["last_insert_id()"]
 
-        # Insert sale details into SALE_DETAILS table
         for j in insert_to_sales_detail:
             self.mycursor.execute("INSERT INTO SALE_DETAILS (sale_id, product_id, quantity, price, discount_per, discount_price, discount_des) VALUES (%s,%s,%s,%s,%s,%s,%s)",(sales_id, j[0], j[1], j[2], j[3], j[4], j[5]))
         self.db.commit()

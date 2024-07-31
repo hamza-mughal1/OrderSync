@@ -20,7 +20,7 @@ class AdminModel:
     def has_required_pairs(dictionary, required):
         return all(item in dictionary.keys() for item in required.keys())
 
-    def add_endpoint(self, endpoint_data): 
+    def create_endpoint(self, endpoint_data): 
         re_fields= {
             "endpoint": "--",
             "method": "--",
@@ -64,20 +64,20 @@ class AdminModel:
         except:
             return make_response({"ERROR":"'ROLES' MUST BE A LIST/ARRAY"}, 401)
         
-        final_endpoints = []
+        final_roles = []
         for i in endpoint_list:
             self.mycursor.execute("SELECT id FROM roles WHERE role = %s",(i,))
             if len(data := self.mycursor.fetchall())<1:
                 make_response({"ERROR":"ROLE NOT FOUND"}, 401)
-            final_endpoints.append(data[0]["id"])
+            final_roles.append(data[0]["id"])
         
 
-        self.mycursor.execute("UPDATE endpoints SET endpoint = %s, method = %s, role = %s WHERE endpoint = %s ", (endpoint_data["endpoint"],endpoint_data["method"],str(final_endpoints), re_fields["old_endpoint"]))
+        self.mycursor.execute("UPDATE endpoints SET endpoint = %s, method = %s, role = %s WHERE endpoint = %s ", (endpoint_data["endpoint"],endpoint_data["method"],str(final_roles), endpoint_data["old_endpoint"]))
         self.db.commit()
 
         return make_response({"MESSAGE":"ENDPOINT HAS BEEN UPDATED SUCCESSFULLY"}, 201)
     
-    def delete_endpoint_by_name(self, endpoint_data): 
+    def delete_endpoint(self, endpoint_data): 
         re_fields= {
             "endpoint": "--",
             }
@@ -89,20 +89,7 @@ class AdminModel:
         self.db.commit()
 
         return make_response({"MESSAGE":"'ENDPOINT' HAS BEEN DELETED"}, 200)
-    
-    def delete_endpoint_by_id(self, endpoint_data): 
-        re_fields= {
-            "id": "--",
-            }
-        
-        if not AdminModel.has_required_pairs(endpoint_data, re_fields):
-            return make_response({"ERROR":"UNAUTHORIZED"}, 401)
-        
-        self.mycursor.execute("DELETE FROM endpoints WHERE id = %s",(endpoint_data["id"],))
-        self.db.commit()
 
-        return make_response({"MESSAGE":"'ENDPOINT' HAS BEEN DELETED"}, 200)
-    
     def create_role(self, role_data):
         re_fields= {
             "role": "--",
@@ -130,7 +117,7 @@ class AdminModel:
 
         return make_response({"MESSAGE":"'ROLE' HAS BEEN UPDATED SUCCESSFULLY"}, 200)
     
-    def remove_role(self, role_data):
+    def delete_role(self, role_data):
         re_fields= {
             "role": "--",
             }
@@ -143,3 +130,19 @@ class AdminModel:
 
         return make_response({"MESSAGE":"'ROLE' HAS BEEN DELETED SUCCESSFULLY"}, 200)
     
+
+    # -----------------------
+    # NO PURPOSE TO USE 
+    # -----------------------
+    # def delete_endpoint_by_id(self, endpoint_data): 
+    #     re_fields= {
+    #         "id": "--",
+    #         }
+        
+    #     if not AdminModel.has_required_pairs(endpoint_data, re_fields):
+    #         return make_response({"ERROR":"UNAUTHORIZED"}, 401)
+        
+    #     self.mycursor.execute("DELETE FROM endpoints WHERE id = %s",(endpoint_data["id"],))
+    #     self.db.commit()
+
+    #     return make_response({"MESSAGE":"'ENDPOINT' HAS BEEN DELETED"}, 200)

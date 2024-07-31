@@ -47,11 +47,14 @@ class AuthModel:
 
                 role = tokendata["payload"]["role"]
                 self.mycursor.execute(
-                    "SELECT role FROM ENDPOINTS WHERE ENDPOINT = %s", (str(endpoint),)
+                    "SELECT role, method FROM ENDPOINTS WHERE ENDPOINT = %s", (str(endpoint),)
                 )
                 roles = self.mycursor.fetchall()[0]["role"]
                 roles = json.loads(roles)
                 if (role in roles) == False:
+                    return make_response({"ERROR": "Forbidden"}, 403)
+                
+                if request.method == self.mycursor.fetchall()[0]["method"]:
                     return make_response({"ERROR": "Forbidden"}, 403)
 
                 self.mycursor.execute(

@@ -80,7 +80,6 @@ class UserModel:
         self.mycursor.execute("DELETE FROM available_refresh_token WHERE token = %s", (refresh_token,))
         
         tokendata = tokendata["payload"]
-        print(tokendata)
         self.mycursor.execute("SELECT id, user_role as role FROM users WHERE user_name = %s", (tokendata["user_name"],))
         data = self.mycursor.fetchall()[0]
         token = UserModel.generate_JWT({
@@ -102,7 +101,7 @@ class UserModel:
         self.mycursor.execute(q, (refresh_token, tokendata["user_name"],tokendata["id"],tokendata["role"],token))
         self.db.commit()
 
-        return {"jwt-token":token,
+        return {"token":token,
                 "refresh-token":refresh_token}, 200
 
     def verify_user(self, user_details):
@@ -143,7 +142,7 @@ class UserModel:
         self.mycursor.execute(q, (refresh_token, user_details["user_name"], result["id"], result["user_role"],token))
         self.db.commit()
 
-        return {"jwt-token":token,
+        return {"token":token,
                 "refresh-token":refresh_token}, 200
 
     def logout(self):
@@ -214,7 +213,7 @@ class UserModel:
         self.db.commit()
         return make_response({"MESSAGE":"YOU HAVE LOGGED OUT SUCCESSFULLY"}, 200)
 
-    def register_user(self, user_details):
+    def create_user(self, user_details):
         re_fields = {"user_name":"--", "name":"--", "password":"--", "user_role":"--"}
         
         if not UserModel.has_required_pairs(user_details, re_fields):
