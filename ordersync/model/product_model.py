@@ -22,8 +22,8 @@ class ProductModel:
         return all(item in dictionary.keys() for item in required.keys())
 
     def all_products(self, page=0):
-        self.mycursor.execute("SELECT products.id as product_id, products.name as product_name, categories.name as category_name, products.price as product_price  FROM products INNER JOIN categories ON products.category_id = categories.id LIMIT %s OFFSET %s", (self.page_limit, self.page_limit*page))
-        return make_response(self.mycursor.fetchall(), 200)
+        self.mycursor.execute("SELECT products.id as product_id, products.name as product_name, categories.name as category_name, products.price as product_price  FROM products INNER JOIN categories ON products.category_id = categories.id WHERE products.toggle = 1 and categories.toggle = 1 LIMIT %s OFFSET %s", (self.page_limit, self.page_limit*page))
+        return make_response({"PRODUCTS" : self.mycursor.fetchall()}, 200)
     
     def place_order(self, sale_details):
         re_fields= {
@@ -45,6 +45,8 @@ class ProductModel:
         
         insert_to_sales_detail = []
         total_price = 0 
+        if not type(sale_details["products"]) == list:
+            return make_response({"ERROR":"UNAUTHORIZED"}, 401)
 
         for i in sale_details["products"]:
             if not ProductModel.has_required_pairs(i, re_prod_fields):
@@ -119,7 +121,7 @@ class ProductModel:
             for i in result:
                 self.mycursor.execute("UPDATE sales SET price = price - %s where id = %s", (i["price"], i["sale_id"]))
                 self.db.commit()
-                self.mycursor.execute("SELECT price, discount from sales where id = %s"(i[0],))
+                self.mycursor.execute("SELECT price, discount from sales where id = %s", (i[0],))
                 price = self.mycursor.fetchall()[0]["price"]
                 discount_per = self.mycursor.fetchall()[0]["discount"]
                 discount_price = price*(discount_per/100)
@@ -131,3 +133,35 @@ class ProductModel:
         self.db.commit()
         return make_response({"MESSAGE":"PRODUCT HAS BEEN DELETED SUCCESSFULLY"}, 201)         
 
+    def product_toggle_on(self, product):
+        self.mycursor.execute("SELECT * FROM products WHERE name = %s", (product,))
+        if len(self.mycursor.fetchall())<1:
+            return make_response({"ERROR":"PRODUCT NOT FOUND"}, 404)
+        self.mycursor.execute("UPDATE products SET toggle = 1 WHERE name = %s", (product,))
+        self.db.commit()
+        return make_response({"MESSAGE":"PRODUCT TOGGLE UPDATED SUCCESSFULLY"}, 200)
+
+    def product_toggle_off(self, product):
+        self.mycursor.execute("SELECT * FROM products WHERE name = %s", (product,))
+        if len(self.mycursor.fetchall())<1:
+            return make_response({"ERROR":"PRODUCT NOT FOUND"}, 404)
+        self.mycursor.execute("UPDATE products SET toggle = 0 WHERE name = %s", (product,))
+        self.db.commit()
+        return make_response({"MESSAGE":"PRODUCT TOGGLE UPDATED SUCCESSFULLY"}, 200)
+    
+    def category_toggle_on(self, category):
+        self.mycursor.execute("SELECT * FROM categories WHERE name = %s", (category,))
+        if len(self.mycursor.fetchall())<1:
+            return make_response({"ERROR":"PRODUCT NOT FOUND"}, 404)
+        self.mycursor.execute("UPDATE categories SET toggle = 1 WHERE name = %s", (category,))
+        self.db.commit()
+        return make_response({"MESSAGE":"PRODUCT TOGGLE UPDATED SUCCESSFULLY"}, 200)
+
+    def category_toggle_off(self, category):
+        self.mycursor.execute("SELECT * FROM categories WHERE name = %s", (category,))
+        if len(self.mycursor.fetchall())<1:
+            return make_response({"ERROR":"PRODUCT NOT FOUND"}, 404)
+        self.mycursor.execute("UPDATE categories SET toggle = 0 WHERE name = %s", (category,))
+        self.db.commit()
+        return make_response({"MESSAGE":"PRODUCT TOGGLE UPDATED SUCCESSFULLY"}, 200)
+    

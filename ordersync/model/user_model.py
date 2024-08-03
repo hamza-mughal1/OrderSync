@@ -252,3 +252,4 @@ class UserModel:
         self.mycursor.execute("DELETE FROM users WHERE user_name = %s", (user_details["user_name"],))
         self.db.commit()
         return make_response({"MESSAGE":"USER HAS BEEN DELETED SUCCESSFULLY"}, 200)
+    
