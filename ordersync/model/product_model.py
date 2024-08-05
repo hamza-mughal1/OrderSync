@@ -94,12 +94,12 @@ class ProductModel:
             return make_response({"ERROR":"UNAUTHORIZED"}, 401)
         
         try:
-            self.mycursor.execute("INSERT INTO products (category_id, name, price) value ((SELECT id FROM CATEGORY WHERE NAME = %s),%s,%s)",(product_details["category_name"], product_details["name"],product_details["price"]))
+            self.mycursor.execute("INSERT INTO products (category_id, name, price) value ((SELECT id FROM CATEGORIES WHERE NAME = %s),%s,%s)",(product_details["category_name"], product_details["name"],product_details["price"]))
         except:
-            return make_response({"ERROR":"ERROR WITH THE PARAMETERS"}, 401)
+            return make_response({"ERROR":"ERROR WITH THE PARAMETERS OR PRODUCT ALREADY EXISTS"}, 401)
         self.db.commit()
         return make_response({"MESSAGE":"PRODUCT HAS BEEN ADDED SUCCESSFULLY"}, 201) 
-    
+
     def delete_product(self, product_details):
         re_fields = {
             "name" : "--"
@@ -133,35 +133,18 @@ class ProductModel:
         self.db.commit()
         return make_response({"MESSAGE":"PRODUCT HAS BEEN DELETED SUCCESSFULLY"}, 201)         
 
-    def product_toggle_on(self, product):
+    def product_toggle(self, product):
         self.mycursor.execute("SELECT * FROM products WHERE name = %s", (product,))
         if len(self.mycursor.fetchall())<1:
             return make_response({"ERROR":"PRODUCT NOT FOUND"}, 404)
-        self.mycursor.execute("UPDATE products SET toggle = 1 WHERE name = %s", (product,))
+        self.mycursor.execute("UPDATE products SET IF(toggle = 1, 0, 1) WHERE name = %s", (product,))
         self.db.commit()
         return make_response({"MESSAGE":"PRODUCT TOGGLE UPDATED SUCCESSFULLY"}, 200)
-
-    def product_toggle_off(self, product):
-        self.mycursor.execute("SELECT * FROM products WHERE name = %s", (product,))
-        if len(self.mycursor.fetchall())<1:
-            return make_response({"ERROR":"PRODUCT NOT FOUND"}, 404)
-        self.mycursor.execute("UPDATE products SET toggle = 0 WHERE name = %s", (product,))
-        self.db.commit()
-        return make_response({"MESSAGE":"PRODUCT TOGGLE UPDATED SUCCESSFULLY"}, 200)
-    
-    def category_toggle_on(self, category):
+  
+    def category_toggle(self, category):
         self.mycursor.execute("SELECT * FROM categories WHERE name = %s", (category,))
         if len(self.mycursor.fetchall())<1:
             return make_response({"ERROR":"PRODUCT NOT FOUND"}, 404)
-        self.mycursor.execute("UPDATE categories SET toggle = 1 WHERE name = %s", (category,))
+        self.mycursor.execute("UPDATE categories SET IF(toggle = 1, 0, 1) WHERE name = %s", (category,))
         self.db.commit()
         return make_response({"MESSAGE":"PRODUCT TOGGLE UPDATED SUCCESSFULLY"}, 200)
-
-    def category_toggle_off(self, category):
-        self.mycursor.execute("SELECT * FROM categories WHERE name = %s", (category,))
-        if len(self.mycursor.fetchall())<1:
-            return make_response({"ERROR":"PRODUCT NOT FOUND"}, 404)
-        self.mycursor.execute("UPDATE categories SET toggle = 0 WHERE name = %s", (category,))
-        self.db.commit()
-        return make_response({"MESSAGE":"PRODUCT TOGGLE UPDATED SUCCESSFULLY"}, 200)
-    

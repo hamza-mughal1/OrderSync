@@ -49,12 +49,13 @@ class AuthModel:
                 self.mycursor.execute(
                     "SELECT role, method FROM ENDPOINTS WHERE ENDPOINT = %s", (str(endpoint),)
                 )
-                roles = self.mycursor.fetchall()[0]["role"]
+                data = self.mycursor.fetchall()[0]
+                roles = data["role"]
                 roles = json.loads(roles)
                 if (role in roles) == False:
                     return make_response({"ERROR": "Forbidden"}, 403)
                 
-                if request.method == self.mycursor.fetchall()[0]["method"]:
+                if request.method == data["method"]:
                     return make_response({"ERROR": "Forbidden"}, 403)
 
                 self.mycursor.execute(

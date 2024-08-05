@@ -8,7 +8,7 @@ product_model = ProductModel()
 auth_model = AuthModel()
 
 
-@app.route("/products/products", methods=["GET"])
+@app.route("/products/list", methods=["GET"])
 @auth_model.token_auth()
 def all_products():
     return product_model.all_products(
@@ -27,33 +27,18 @@ def delete_product():
     return product_model.delete_product(request.json)
 
 
-@app.route("/products/products-toggle-on", methods=["PATCH"])
+@app.route("/products/products-toggle", methods=["PATCH"])
 @auth_model.token_auth()
-def product_toggle_on():
-    return product_model.product_toggle_on(
+def product_toggle():
+    return product_model.product_toggle(
         product=request.args.get("product", default="None", type=str)
     )
 
 
-@app.route("/products/products-toggle-off", methods=["PATCH"])
+@app.route("/products/categories-toggle", methods=["PATCH"])
 @auth_model.token_auth()
-def product_toggle_off():
-    return product_model.product_toggle_off(
-        product=request.args.get("product", default="None", type=str)
-    )
-
-
-@app.route("/products/categories-toggle-on", methods=["PATCH"])
-@auth_model.token_auth()
-def category_toggle_on():
-    return product_model.category_toggle_on(
+def category_toggle():
+    return product_model.category_toggle(
         category=request.args.get("category", default="None", type=str)
     )
 
-
-@app.route("/products/categories-toggle-off", methods=["PATCH"])
-@auth_model.token_auth()
-def category_toggle_off():
-    return product_model.category_toggle_off(
-        category=request.args.get("category", default="None", type=str)
-    )
