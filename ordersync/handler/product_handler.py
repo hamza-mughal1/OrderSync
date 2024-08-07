@@ -27,18 +27,10 @@ def delete_product():
     return product_model.delete_product(request.json)
 
 
-@app.route("/products/products-toggle", methods=["PATCH"])
+@app.route("/products/toggle", methods=["PATCH"])
 @auth_model.token_auth()
 def product_toggle():
     return product_model.product_toggle(
         product=request.args.get("product", default="None", type=str)
-    )
-
-
-@app.route("/products/categories-toggle", methods=["PATCH"])
-@auth_model.token_auth()
-def category_toggle():
-    return product_model.category_toggle(
-        category=request.args.get("category", default="None", type=str)
     )
 

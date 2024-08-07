@@ -1,3 +1,4 @@
+from math import prod
 import mysql.connector
 from model.config import *
 from flask import make_response
@@ -24,71 +25,16 @@ class ProductModel:
     def all_products(self, page=0):
         self.mycursor.execute("SELECT products.id as product_id, products.name as product_name, categories.name as category_name, products.price as product_price  FROM products INNER JOIN categories ON products.category_id = categories.id WHERE products.toggle = 1 and categories.toggle = 1 LIMIT %s OFFSET %s", (self.page_limit, self.page_limit*page))
         return make_response({"PRODUCTS" : self.mycursor.fetchall()}, 200)
-    
-    def place_order(self, sale_details):
-        re_fields= {
-            "user_id" : "--",
-            "products": "--",
-            "sale_discount_per" : "--",
-            "sale_discount_desc": "--"
-        }
-        
-        if not ProductModel.has_required_pairs(sale_details, re_fields):
-            return make_response({"ERROR":"UNAUTHORIZED"}, 401)
-        
-        re_prod_fields = {
-                "product_name": "--",
-                "quantity": "--",
-                "product_discount_per": "--",
-                "product_discount_desc": "--"
-            }
-        
-        insert_to_sales_detail = []
-        total_price = 0 
-        if not type(sale_details["products"]) == list:
-            return make_response({"ERROR":"UNAUTHORIZED"}, 401)
 
-        for i in sale_details["products"]:
-            if not ProductModel.has_required_pairs(i, re_prod_fields):
-                return make_response({"ERROR":"UNAUTHORIZED"}, 401)
-            
-            self.mycursor.execute("SELECT id, price FROM PRODUCTS WHERE NAME = %s",(i['product_name'],))
-            if len(result_cursor := self.mycursor.fetchall())<1:
-                return make_response({"ERROR":"PRODUCT NOT FOUND"}, 404)
-            
-            result_cursor = result_cursor[0]
-
-            insert_to_sales_detail.append([
-                result_cursor["id"], 
-                i["quantity"],
-                result_cursor["price"] * i["quantity"],
-                i["product_discount_per"],
-                (i["product_discount_per"] / 100) * (result_cursor["price"] * i["quantity"]),
-                i["product_discount_desc"]
-            ])
-            total_price += ((result_cursor["price"] * i["quantity"]) - (i["product_discount_per"] / 100) * (result_cursor["price"] * i["quantity"]))
-
-        try:
-            self.mycursor.execute("INSERT INTO SALES (user_id, price, discount_per, discount_price, discount_des) VALUES (%s,%s,%s,%s,%s)",(sale_details ['user_id'], total_price, sale_details['sale_discount_per'], int((sale_details ['sale_discount_per'] / 100) * total_price), sale_details ['sale_discount_desc']))
-        except mysql.connector.errors.IntegrityError:
-            return make_response({"ERROR":"USER NOT FOUND"}, 404)
-        self.db.commit()
-
-        self.mycursor.execute("SELECT last_insert_id()")
-        sales_id = self.mycursor.fetchall()[0]["last_insert_id()"]
-
-        for j in insert_to_sales_detail:
-            self.mycursor.execute("INSERT INTO SALE_DETAILS (sale_id, product_id, quantity, price, discount_per, discount_price, discount_des) VALUES (%s,%s,%s,%s,%s,%s,%s)",(sales_id, j[0], j[1], j[2], j[3], j[4], j[5]))
-        self.db.commit()
-
-        return make_response({"MESSAGE":"ORDER HAS BEEN PLACED"},201)
-    
     def add_product(self, product_details):
         re_fields = {
                 "category_name": "--",
                 "name": "--",
                 "price": "--",
         }
+
+        if not type(product_details) == dict:
+            return make_response({"ERROR":"ONLY JSON DICTIONARY/HASHMAP IS ALLOWED"}, 400)
         
         if not ProductModel.has_required_pairs(product_details, re_fields):
             return make_response({"ERROR":"UNAUTHORIZED"}, 401)
@@ -104,6 +50,9 @@ class ProductModel:
         re_fields = {
             "name" : "--"
         }
+
+        if not type(product_details) == dict:
+            return make_response({"ERROR":"ONLY JSON DICTIONARY/HASHMAP IS ALLOWED"}, 400)
 
         if not ProductModel.has_required_pairs(product_details, re_fields):
             return make_response({"ERROR":"UNAUTHORIZED"}, 401)
@@ -137,14 +86,6 @@ class ProductModel:
         self.mycursor.execute("SELECT * FROM products WHERE name = %s", (product,))
         if len(self.mycursor.fetchall())<1:
             return make_response({"ERROR":"PRODUCT NOT FOUND"}, 404)
-        self.mycursor.execute("UPDATE products SET IF(toggle = 1, 0, 1) WHERE name = %s", (product,))
-        self.db.commit()
-        return make_response({"MESSAGE":"PRODUCT TOGGLE UPDATED SUCCESSFULLY"}, 200)
-  
-    def category_toggle(self, category):
-        self.mycursor.execute("SELECT * FROM categories WHERE name = %s", (category,))
-        if len(self.mycursor.fetchall())<1:
-            return make_response({"ERROR":"PRODUCT NOT FOUND"}, 404)
-        self.mycursor.execute("UPDATE categories SET IF(toggle = 1, 0, 1) WHERE name = %s", (category,))
+        self.mycursor.execute("UPDATE products SET toggle = IF(toggle = 1, 0, 1) WHERE name = %s", (product,))
         self.db.commit()
         return make_response({"MESSAGE":"PRODUCT TOGGLE UPDATED SUCCESSFULLY"}, 200)
