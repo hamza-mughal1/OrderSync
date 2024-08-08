@@ -1,4 +1,3 @@
-from math import prod
 import mysql.connector
 from model.config import *
 from flask import make_response
@@ -89,3 +88,20 @@ class ProductModel:
         self.mycursor.execute("UPDATE products SET toggle = IF(toggle = 1, 0, 1) WHERE name = %s", (product,))
         self.db.commit()
         return make_response({"MESSAGE":"PRODUCT TOGGLE UPDATED SUCCESSFULLY"}, 200)
+
+    def product_by_category(self, category):
+        if category == "None":
+            return make_response({"ERROR":"NO CATEGORY WAS PROVIDED"}, 401)
+        
+        self.mycursor.execute("SELECT id FROM categories WHERE name = %s", (category,))
+        if len(id := self.mycursor.fetchall())<1:
+            return make_response({"ERROR":"NO CATEGORY FOUND"}, 404)
+        
+        self.mycursor.execute("SELECT name, price FROM products WHERE category_id = %s", (id[0]["id"],))
+
+        return make_response({"Category":category, "products":self.mycursor.fetchall()}, 200)
+    
+    def product_by_price_range(self, start, range):
+        self.mycursor.execute("SELECT name, price FROM products WHERE price > %s and price < %s",(start, range))
+        return make_response({"products":self.mycursor.fetchall()}, 200)
+    

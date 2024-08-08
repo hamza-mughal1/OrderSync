@@ -108,7 +108,7 @@ class UserModel:
         re_fields = {"user_name": "--", "password": "--"}
         
         if not UserModel.has_required_pairs(user_details, re_fields):
-            return "Unauthorized", 401
+            return make_response({"ERROR":"UNAUTHORIZED"}, 401)
         
         query = "SELECT password FROM users WHERE user_name = %s"
         self.mycursor.execute(query, (user_details["user_name"],))
@@ -216,6 +216,9 @@ class UserModel:
     def create_user(self, user_details):
         re_fields = {"user_name":"--", "name":"--", "password":"--", "user_role":"--"}
         
+        if not type(user_details) == dict:
+            return make_response({"ERROR":"ONLY JSON DICTIONARY/HASHMAP IS ALLOWED"}, 400)
+        
         if not UserModel.has_required_pairs(user_details, re_fields):
             return "Unauthorized", 401
         try:
@@ -224,16 +227,20 @@ class UserModel:
             return make_response({"ERROR":"INCORRECT PARAMETERS"}, 400)
         except:
             return make_response({"ERROR":"INTERNAL SERVER ERROR"}, 500)
-
-        try:
-            self.mycursor.execute("INSERT INTO users (name, user_name, password, user_role) value (%s, %s, %s, %s)", (user_details["name"], user_details["user_name"], hashed_pass, user_details["user_role"]))
-            self.db.commit()
-            return make_response({"MESSAGE":"USER HAS BEEN REGISTERED SUCCESSFULLY"}, 201)
-        except mysql.connector.errors.IntegrityError:
-            return make_response({"ERROR":"USERNAME ALREADY EXISTS"}, 409)
         
+        self.mycursor.execute("SELECT * FROM users WHERE user_name = %s", (user_details["user_name"],))
+        if len(self.mycursor.fetchall())>=1:
+            return make_response({"ERROR":"USERNAME ALREADY EXISTS"}, 409)
+
+        self.mycursor.execute("INSERT INTO users (name, user_name, password, user_role) value (%s, %s, %s, %s)", (user_details["name"], user_details["user_name"], hashed_pass, user_details["user_role"]))
+        self.db.commit()
+        return make_response({"MESSAGE":"USER HAS BEEN REGISTERED SUCCESSFULLY"}, 201)
+            
     def delete_user(self, user_details):
         re_fields = {"user_name":"--"}
+
+        if not UserModel.has_required_pairs(user_details, re_fields):
+            return make_response({"ERROR":"UNAUTHORIZED"}, 401)
         
         if not UserModel.has_required_pairs(user_details, re_fields):
             return "Unauthorized", 401

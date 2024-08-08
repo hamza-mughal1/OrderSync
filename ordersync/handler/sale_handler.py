@@ -11,6 +11,25 @@ def all_sale():
     return sale_model.all_sales()
 
 
-@app.route("/sales/sales-revenue", methods=["GET"])
+@app.route("/sales/revenue", methods=["GET"])
+# @auth_model.token_auth()
 def sales_revenue():
     return sale_model.sales_revenue()
+
+@app.route("/sales/top-three-products", methods=["GET"])
+# @auth_model.token_auth()
+def top_three_products():
+    return sale_model.top_three_products()
+
+@app.route("/sales/top-two-selling-days", methods=["GET"])
+# @auth_model.token_auth()
+def top_two_selling_days():
+    return sale_model.top_two_selling_days()
+
+@app.route("/sales/most-selling-hours", methods=["GET"])
+# @auth_model.token_auth()
+def most_selling_hours():
+    return sale_model.most_selling_hours()
+
+
+

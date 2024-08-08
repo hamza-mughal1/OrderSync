@@ -156,9 +156,15 @@ class AdminModel:
             "role": "--",
             }
         
+        if not type(role_data) == dict:
+            return make_response({"ERROR":"ONLY JSON DICTIONARY/HASHMAP IS ALLOWED"}, 400)
+        
         if not AdminModel.has_required_pairs(role_data, re_fields):
             return make_response({"ERROR":"UNAUTHORIZED"}, 401)
         
+        self.mycursor.execute("SELECT * FROM roles WHERE role = %s",(role_data["role"],))
+        if len(self.mycursor.fetchall())<1:
+            return make_response({"ERROR":"ROLE NOT FOUND"}, 404)
 
         self.mycursor.execute("DELETE FROM roles WHERE role = %s",(role_data["role"],))
 

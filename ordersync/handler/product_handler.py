@@ -34,3 +34,16 @@ def product_toggle():
         product=request.args.get("product", default="None", type=str)
     )
 
+@app.route("/products/get-by-category", methods=["GET"])
+# @auth_model.token_auth()
+def product_by_category():
+    return product_model.product_by_category(request.args.get("category", default="None", type=str))
+
+@app.route("/products/get-by-price-range", methods=["GET"])
+# @auth_model.token_auth()
+def products_by_price_range():
+    return product_model.product_by_price_range(start = request.args.get("start", default=0, type=int),
+                                             range = request.args.get("range", default=0, type=int))
+
+
+
