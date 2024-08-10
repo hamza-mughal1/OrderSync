@@ -10,7 +10,6 @@ auth_model = AuthModel()
 def all_sale():
     return sale_model.all_sales()
 
-
 @app.route("/sales/revenue", methods=["GET"])
 # @auth_model.token_auth()
 def sales_revenue():
