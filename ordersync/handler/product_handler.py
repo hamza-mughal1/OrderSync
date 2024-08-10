@@ -2,6 +2,7 @@ from app import app
 from flask import request
 from model.product_model import ProductModel
 from model.auth_model import AuthModel
+from datetime import datetime
 
 
 product_model = ProductModel()
@@ -14,6 +15,7 @@ def all_products():
     return product_model.all_products(
         page=request.args.get("page", default=0, type=int)
     )
+
 
 @app.route("/products/add", methods=["POST"])
 @auth_model.token_auth()
@@ -34,16 +36,31 @@ def product_toggle():
         product=request.args.get("product", default="None", type=str)
     )
 
+
 @app.route("/products/get-by-category", methods=["GET"])
 # @auth_model.token_auth()
 def product_by_category():
-    return product_model.product_by_category(request.args.get("category", default="None", type=str))
+    return product_model.product_by_category(
+        request.args.get("category", default="None", type=str)
+    )
+
 
 @app.route("/products/get-by-price-range", methods=["GET"])
 # @auth_model.token_auth()
 def products_by_price_range():
-    return product_model.product_by_price_range(start = request.args.get("start", default=0, type=int),
-                                             range = request.args.get("range", default=0, type=int))
+    return product_model.product_by_price_range(
+        start=request.args.get("start", default=0, type=int),
+        range=request.args.get("range", default=0, type=int),
+    )
 
 
+@app.route("/products/upload-image/<product_name>", methods=["PUT"])
+# @auth_model.token_auth()
+def upload_product_image(product_name):
+    return product_model.upload_product_image(product_name, request.files)
 
+
+@app.route("/products/image/<product_name>", methods=["GET"])
+# @auth_model.token_auth()
+def get_product_image(product_name):
+    return product_model.get_product_image(product_name)

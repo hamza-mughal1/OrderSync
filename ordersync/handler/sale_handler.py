@@ -30,5 +30,9 @@ def top_two_selling_days():
 def most_selling_hours():
     return sale_model.most_selling_hours()
 
+@app.route("/sales/delta-percentage-by-months", methods=["GET"])
+# @auth_model.token_auth()
+def delta_percentage_by_months():
+    return sale_model.delta_percentage_by_months()
 
 

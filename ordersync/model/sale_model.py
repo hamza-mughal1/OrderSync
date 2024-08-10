@@ -16,6 +16,32 @@ class SaleModel:
         )
         self.mycursor = self.db.cursor(dictionary=True)
 
+    @staticmethod
+    def month_name_by_number(month_no):
+        months = [
+                    "January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"
+                ]
+
+        return months[int(month_no)-1]
+
+    @staticmethod
+    def growth_percentage_calculator(lis):
+        pre = None
+        final_dict = {}
+        for i in lis:
+            if pre == None:
+                pre = i
+            else:
+                if pre["price"] == 0:
+                    final_dict[f"{SaleModel.month_name_by_number(pre["month"])} - {SaleModel.month_name_by_number(i["month"])}"] = "previous sale was 0"
+                else:
+                    final_dict[f"{SaleModel.month_name_by_number(pre["month"])} - {SaleModel.month_name_by_number(i["month"])}"] = f"{round(((int(i["price"]) - int(pre["price"]))/int(pre["price"]))*100,2)}%"
+                pre = i
+
+        return final_dict
+
+
     def all_sales(self):
         """
         Retrieve all sales from the database.
@@ -273,6 +299,9 @@ class SaleModel:
         return make_response({"REPORT":dic}, 200)
     
     def top_two_selling_days(self):
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         self.mycursor.execute("""SELECT 
 	                                DATE(date) AS sale_date, SUM(price) AS total_price
                                 FROM 
@@ -322,6 +351,9 @@ class SaleModel:
         return make_response({"REPORT":dic}, 200)
     
     def most_selling_hours(self):
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         self.mycursor.execute("""SELECT 
                                 IF(HOUR>12,CONCAT(IF(MOD(HOUR,12)=0,12,MOD(HOUR,12)), "pm"),CONCAT(HOUR,"am")) as hour, total_price
                                 FROM (SELECT 
@@ -392,3 +424,14 @@ class SaleModel:
                 "ALL_TIME":all_time}
         
         return make_response({"REPORT":dic}, 200)
+
+    def delta_percentage_by_months(self):
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
+        self.mycursor.execute("SELECT MONTH(DATE)as month, SUM(price) as price FROM SALES GROUP BY MONTH(DATE)")
+        sales_delta = SaleModel.growth_percentage_calculator(sorted(self.mycursor.fetchall(),key=lambda x : x["month"]))
+
+        print(sales_delta)
+
+        return make_response({"SALES PERCENTAGE DELTA":sales_delta},200)
