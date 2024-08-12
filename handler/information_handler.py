@@ -3,7 +3,7 @@ from model.information_model import InformationModel
 from model.auth_model import AuthModel
 
 
-information_model =  InformationModel()
+information_model = InformationModel()
 auth_model = AuthModel()
 
 
@@ -14,5 +14,6 @@ def all_roles():
 
 
 @app.route("/information/all-endpoints", methods=["GET"])
+@auth_model.token_auth()
 def all_endpoints():
     return information_model.all_endpoints()

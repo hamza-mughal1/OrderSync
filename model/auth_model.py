@@ -22,6 +22,7 @@ class AuthModel:
 
     def token_auth(self, endpoint=""):
         ed = endpoint
+
         def decorator(func):
             @wraps(func)
             def wrapper(*args, **kwargs):
@@ -47,14 +48,15 @@ class AuthModel:
 
                 role = tokendata["payload"]["role"]
                 self.mycursor.execute(
-                    "SELECT role, method FROM ENDPOINTS WHERE ENDPOINT = %s", (str(endpoint),)
+                    "SELECT role, method FROM ENDPOINTS WHERE ENDPOINT = %s",
+                    (str(endpoint),),
                 )
                 data = self.mycursor.fetchall()[0]
                 roles = data["role"]
                 roles = json.loads(roles)
                 if (role in roles) == False:
                     return make_response({"ERROR": "Forbidden"}, 403)
-                
+
                 if request.method == data["method"]:
                     return make_response({"ERROR": "Forbidden"}, 403)
 

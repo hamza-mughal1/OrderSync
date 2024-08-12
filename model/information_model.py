@@ -4,6 +4,7 @@ from flask import make_response, request
 import re
 import jwt
 
+
 class InformationModel:
     def __init__(self):
         """
@@ -25,17 +26,30 @@ class InformationModel:
 
     def all_roles(self):
         self.mycursor.execute("SELECT role FROM roles")
-        return {"ROLES":list(map(lambda x : x["role"] ,self.mycursor.fetchall()))}
-    
+        return {"ROLES": list(map(lambda x: x["role"], self.mycursor.fetchall()))}
+
     def all_endpoints(self):
         authorization = request.headers.get("Authorization")
-        if re.match("^Bearer *([^ ]+)", authorization, flags=0) == None:
-            return make_response({"ERROR": "INVALID_TOKEN"}, 401)
-        
+        try:
+            if re.match("^Bearer *([^ ]+) *$", authorization, flags=0) == None:
+                return make_response({"ERROR": "INVALID_TOKEN"}, 401)
+        except TypeError:
+            return make_response({"ERROR": "TOKEN NOT FOUND"}, 400)
         _, jwt_token = authorization.split(" ")
 
         token_data = jwt.decode(jwt_token, secret_key, algorithms="HS256")
 
-        self.mycursor.execute("SELECT endpoint, method FROM endpoints WHERE JSON_CONTAINS(role, %s)", (str(token_data["payload"]["role"]),))
+        self.mycursor.execute(
+            "SELECT endpoint, method FROM endpoints WHERE JSON_CONTAINS(role, %s)",
+            (str(token_data["payload"]["role"]),),
+        )
 
-        return make_response({"ENDPOINTS":[{"endpoint":i["endpoint"],"method":list(i["method"])[0]} for i in self.mycursor.fetchall()]}, 200)
+        return make_response(
+            {
+                "ENDPOINTS": [
+                    {"endpoint": i["endpoint"], "method": list(i["method"])[0]}
+                    for i in self.mycursor.fetchall()
+                ]
+            },
+            200,
+        )
