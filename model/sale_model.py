@@ -1,19 +1,14 @@
 import mysql.connector
 from model.config import *
 from flask import make_response
-
+from model.mysql_connector_obj import create_connection
 
 class SaleModel:
     def __init__(self):
         """
         Initialize the database connection and cursor.
         """
-        self.db = mysql.connector.connect(
-            host=db_config["host"],
-            user=db_config["user"],
-            password=db_config["password"],
-            database=db_config["database"],
-        )
+        self.db = create_connection()
         self.mycursor = self.db.cursor(dictionary=True)
 
     @staticmethod

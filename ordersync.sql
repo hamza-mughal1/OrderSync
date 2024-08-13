@@ -1,5 +1,3 @@
-USE ordersync;
-
 CREATE TABLE categories (
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
@@ -18,9 +16,10 @@ CREATE TABLE products (
     FOREIGN KEY (category_id) REFERENCES categories(id)
 );
 
-CREATE TABLE role (
+CREATE TABLE roles (
     id INT NOT NULL AUTO_INCREMENT,
-    role VARCHAR(50) NOT NULL UNIQUE
+    role VARCHAR(50) NOT NULL UNIQUE,
+    PRIMARY KEY(id)
 );
 
 CREATE TABLE users (
@@ -30,7 +29,7 @@ CREATE TABLE users (
     password VARCHAR(300) NOT NULL,
     user_role INT NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY(user_role) REFERENCES role(id)
+    FOREIGN KEY(user_role) REFERENCES roles(id)
 );
 
 CREATE TABLE sales (
@@ -88,7 +87,7 @@ CREATE TABLE endpoints (
     id INT NOT NULL AUTO_INCREMENT,
     endpoint VARCHAR(300),
     method SET("GET","POST","PUT","PATCH","DELETE") DEFAULT "GET",
-    role JSON DEFAULT "[]",
+    role JSON,
     PRIMARY KEY(id)
 );
 
@@ -106,4 +105,34 @@ DO
 DELETE FROM available_refresh_token
 WHERE created_at < NOW() - INTERVAL 2 DAY;
 
+
+INSERT INTO roles(id, role) VALUE(1, "admin");
+INSERT INTO users(name, user_name, password, user_role) VALUE ("admin","admin","$2b$12$sGIrOsxApKxMOkNN0rjyp.v3bBBW89RXy2txe1E5SchrHDbRwiYe6",1);
+INSERT INTO endpoints (endpoint, method, role) VALUES
+("/products/list","GET","[1]"),
+("/orders/place","POST","[1]"),
+("/products/add","POST","[1]"),
+("/products/delete","DELETE","[1]"),
+("/products/toggle","PATCH","[1]"),
+("/categories/toggle","PATCH","[1]"),
+("/information/all-roles","GET","[1]"),
+("/information/all-endpoints","GET","[1]"),
+("/sales/sales","GET","[1]"),
+("/admin/endpoints","POST","[1]"),
+("/admin/endpoints","PUT","[1]"),
+("/admin/endpoints","DELETE","[1]"),
+("/admin/roles","POST","[1]"),
+("/admin/roles","PUT","[1]"),
+("/admin/roles","DELETE","[1]"),
+("/sales/revenue","GET","[1]"),
+("/sales/top-products","GET","[1]"),
+("/sales/top-selling-days","GET","[1]"),
+("/sales/most-selling-hours","GET","[1]"),
+("/sales/delta-percentage","GET","[1]"),
+("/products/get-by-category","GET","[1]"),
+("/products/get-by-price-range","GET","[1]"),
+("/products/upload-image/<product_name>","GET","[1]"),
+("/products/image/<product_name>","GET","[1]"),
+("/users/users","POST","[1]"),
+("/users/users","DELETE","[1]");
 

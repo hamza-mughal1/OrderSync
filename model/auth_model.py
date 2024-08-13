@@ -5,6 +5,7 @@ from flask import request, make_response
 import re
 import json
 from functools import wraps
+from model.mysql_connector_obj import create_connection
 
 
 class AuthModel:
@@ -12,12 +13,7 @@ class AuthModel:
         """
         Initialize the database connection and cursor.
         """
-        self.db = mysql.connector.connect(
-            host=db_config["host"],
-            user=db_config["user"],
-            password=db_config["password"],
-            database=db_config["database"],
-        )
+        self.db = create_connection()
         self.mycursor = self.db.cursor(dictionary=True)
 
     def token_auth(self, endpoint=""):
@@ -51,7 +47,10 @@ class AuthModel:
                     "SELECT role, method FROM ENDPOINTS WHERE ENDPOINT = %s",
                     (str(endpoint),),
                 )
-                data = self.mycursor.fetchall()[0]
+                data = self.mycursor.fetchall()
+                if len(data) < 1:
+                    return make_response({"ERROR": "NO ENDPOINT FOUND"}, 404)
+                data = data[0]
                 roles = data["role"]
                 roles = json.loads(roles)
                 if (role in roles) == False:

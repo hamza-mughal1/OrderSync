@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import jwt
 from flask import make_response, request
 import re
+from model.mysql_connector_obj import create_connection
 
 
 class UserModel:
@@ -12,12 +13,7 @@ class UserModel:
         """
         Initialize the database connection and cursor.
         """
-        self.db = mysql.connector.connect(
-            host=db_config["host"],
-            user=db_config["user"],
-            password=db_config["password"],
-            database=db_config["database"],
-        )
+        self.db = create_connection()
         self.mycursor = self.db.cursor(dictionary=True)
 
         self.jwt_time_in_minutes = 15
@@ -311,6 +307,7 @@ class UserModel:
 
         if not UserModel.has_required_pairs(user_details, re_fields):
             return "Unauthorized", 401
+
         try:
             hashed_pass = UserModel.generate_hashed_password(user_details["password"])
         except (KeyError, TypeError):
@@ -325,12 +322,18 @@ class UserModel:
             return make_response({"ERROR": "USERNAME ALREADY EXISTS"}, 409)
 
         self.mycursor.execute(
+            "SELECT id FROM roles WHERE role = %s", (user_details["user_role"],)
+        )
+        if len(id := self.mycursor.fetchall()) < 1:
+            return make_response({"ERROR": "ROLE NOT FOUND"}, 404)
+
+        self.mycursor.execute(
             "INSERT INTO users (name, user_name, password, user_role) value (%s, %s, %s, %s)",
             (
                 user_details["name"],
                 user_details["user_name"],
                 hashed_pass,
-                user_details["user_role"],
+                id[0]["id"],
             ),
         )
         self.db.commit()
