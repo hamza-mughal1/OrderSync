@@ -5,11 +5,11 @@ COPY ./requirement.txt /requirement.txt
 
 RUN pip install -r /requirement.txt
 
+# EXPOSE 3000
+
+COPY ./images /images
 COPY ./app.py /app.py
 COPY ./handler /handler
 COPY ./model /model
-COPY ./images /images
 
-EXPOSE 3000
-
-RUN python3 /app.py
+CMD ["python3", "/app.py"]

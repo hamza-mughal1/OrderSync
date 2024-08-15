@@ -1,7 +1,7 @@
 db_config = {
-    "host": "localhost",
+    "host": "mysql-db",
     "user": "root",
-    "port": "3333",
+    "port": "3306",
     "password": "root",
     "database": "ordersync",
 }
