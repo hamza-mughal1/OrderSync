@@ -1,8 +1,12 @@
-import mysql.connector
-from model.config import *
 from flask import make_response, request
 import re
 import jwt
+from model.config import *
+
+"""
+Import 'create_connection' function from 'mysql_connector_obj' file to create a connection to the database,
+to maintain the connection only from one place in all models
+"""
 from model.mysql_connector_obj import create_connection
 
 
@@ -18,19 +22,42 @@ class InformationModel:
 
     @staticmethod
     def has_required_pairs(dictionary, required):
+        """
+        Check if the dictionary contains all the required keys.
+
+        Args:
+            dictionary (dict): The dictionary to check.
+            required (dict): A dictionary of required keys.
+
+        Returns:
+            bool: True if all required keys are present, False otherwise.
+        """
         return all(item in dictionary.keys() for item in required.keys())
 
     def all_roles(self):
+        """
+        Retrieve all roles from the database.
+
+        Returns:
+            dict: A dictionary with a list of roles.
+        """
         self.mycursor.execute("SELECT role FROM roles")
         return {"ROLES": list(map(lambda x: x["role"], self.mycursor.fetchall()))}
 
     def all_endpoints(self):
+        """
+        Retrieve all endpoints accessible to the user based on their role.
+
+        Returns:
+            Response: A Flask response object with a list of endpoints and HTTP status code.
+        """
         authorization = request.headers.get("Authorization")
         try:
             if re.match("^Bearer *([^ ]+) *$", authorization, flags=0) == None:
                 return make_response({"ERROR": "INVALID_TOKEN"}, 401)
         except TypeError:
             return make_response({"ERROR": "TOKEN NOT FOUND"}, 400)
+
         _, jwt_token = authorization.split(" ")
 
         token_data = jwt.decode(jwt_token, secret_key, algorithms="HS256")

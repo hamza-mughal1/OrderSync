@@ -1,4 +1,3 @@
-import mysql.connector
 from model.config import *
 from flask import make_response
 import json
@@ -15,9 +14,22 @@ class AdminModel:
 
     @staticmethod
     def has_required_pairs(dictionary, required):
+        """
+        Check if the dictionary contains all required keys.
+
+        :param dictionary: The dictionary to check.
+        :param required: A dictionary of required keys.
+        :return: True if all required keys are present, False otherwise.
+        """
         return all(item in dictionary.keys() for item in required.keys())
 
     def create_endpoint(self, endpoint_data):
+        """
+        Create a new endpoint in the database.
+
+        :param endpoint_data: A dictionary containing endpoint information.
+        :return: A response indicating the success or failure of the operation.
+        """
         re_fields = {"endpoint": "--", "method": "--", "roles": "--"}
 
         if not type(endpoint_data) == dict:
@@ -62,6 +74,12 @@ class AdminModel:
         return make_response({"MESSAGE": "ENDPOINT HAS BEEN ADDED SUCCESSFULLY"}, 201)
 
     def update_endpoint(self, endpoint_data):
+        """
+        Update an existing endpoint in the database.
+
+        :param endpoint_data: A dictionary containing the updated endpoint information.
+        :return: A response indicating the success or failure of the operation.
+        """
         re_fields = {
             "old_endpoint": "--",
             "endpoint": "--",
@@ -106,6 +124,12 @@ class AdminModel:
         return make_response({"MESSAGE": "ENDPOINT HAS BEEN UPDATED SUCCESSFULLY"}, 201)
 
     def delete_endpoint(self, endpoint_data):
+        """
+        Delete an endpoint from the database.
+
+        :param endpoint_data: A dictionary containing the endpoint information to delete.
+        :return: A response indicating the success or failure of the operation.
+        """
         re_fields = {
             "endpoint": "--",
         }
@@ -132,6 +156,12 @@ class AdminModel:
         return make_response({"MESSAGE": "'ENDPOINT' HAS BEEN DELETED"}, 200)
 
     def create_role(self, role_data):
+        """
+        Create a new role in the database.
+
+        :param role_data: A dictionary containing role information.
+        :return: A response indicating the success or failure of the operation.
+        """
         re_fields = {
             "role": "--",
         }
@@ -158,6 +188,12 @@ class AdminModel:
         return make_response({"MESSAGE": "'ROLE' HAS BEEN ADDED SUCCESSFULLY"}, 201)
 
     def update_role(self, role_data):
+        """
+        Update an existing role in the database.
+
+        :param role_data: A dictionary containing the updated role information.
+        :return: A response indicating the success or failure of the operation.
+        """
         re_fields = {
             "old_role": "--",
             "role": "--",
@@ -186,6 +222,12 @@ class AdminModel:
         return make_response({"MESSAGE": "'ROLE' HAS BEEN UPDATED SUCCESSFULLY"}, 200)
 
     def delete_role(self, role_data):
+        """
+        Delete a role from the database.
+
+        :param role_data: A dictionary containing the role information to delete.
+        :return: A response indicating the success or failure of the operation.
+        """
         re_fields = {
             "role": "--",
         }

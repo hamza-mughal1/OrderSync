@@ -1,4 +1,3 @@
-import mysql.connector
 from model.config import *
 from flask import make_response
 from model.mysql_connector_obj import create_connection
@@ -13,6 +12,15 @@ class SaleModel:
 
     @staticmethod
     def month_name_by_number(month_no):
+        """
+        Converts a given month number to its corresponding month name.
+
+        Args:
+            month_no (int or str): The month number (1 for January, 2 for February, etc.).
+
+        Returns:
+            str: The name of the corresponding month.
+        """
         months = [
                     "January", "February", "March", "April", "May", "June",
                     "July", "August", "September", "October", "November", "December"
@@ -22,6 +30,20 @@ class SaleModel:
 
     @staticmethod
     def growth_percentage_calculator(lis):
+        """
+        Calculates the percentage growth in sales prices between consecutive months.
+
+        Args:
+            lis (list): A list of dictionaries, each containing 'month' and 'price' keys.
+                        The 'month' key should be an integer representing the month number,
+                        and the 'price' key should be an integer representing the sales price.
+
+        Returns:
+            dict: A dictionary where each key is a string representing the range of months
+                (e.g., "January - February"), and each value is the percentage growth
+                between those months as a string (e.g., "10.00%"). If the previous sale price is 0,
+                the value will be "previous sale was 0".
+        """
         pre = None
         final_dict = {}
         for i in lis:
@@ -36,13 +58,12 @@ class SaleModel:
 
         return final_dict
 
-
     def all_sales(self):
         """
-        Retrieve all sales from the database.
-
+        Calculate all sales and formate it into a nice dict
+        
         Returns:
-        - str: JSON-formatted string containing sale information.
+            dict: A dictionary containing all the sales
         """
         sales_dic = []
         self.mycursor.execute("SELECT * FROM SALES")
@@ -89,6 +110,12 @@ class SaleModel:
         return make_response({"SALES": sales_dic}, 200)
 
     def sales_revenue(self):
+        """
+        Perform calculations and analysis on the sales and generate sale revenue report
+
+        Returns:
+            Dict/JSON: A dictionary containing sales revenue report by day, week, month, and year period.
+        """
         try:
             self.mycursor.execute(
                 "SELECT SUM(price) AS revenue FROM sales WHERE DATE(sales.date) = CURDATE()"
@@ -120,6 +147,12 @@ class SaleModel:
             return make_response({"ERROR":"INTERNAL SERVER ERROR"}, 500)
 
     def top_three_products(self):
+        """
+        Calculate and analysis of products and generate report of top three most selling products.
+        Returns:
+                Dict/JSON: A dictionary containing report of most selling three products by day, week, month, and year period.
+        
+        """
         self.mycursor.close()
         self.db.reconnect()
         self.mycursor = self.db.cursor(dictionary=True)
@@ -294,6 +327,11 @@ class SaleModel:
         return make_response({"REPORT":dic}, 200)
     
     def top_two_selling_days(self):
+        """
+        Calculate and perform analysis on sales and generate report of two most selling days by week, month, and year period.
+        Return:
+                Dict/JSON: A dictionary containing the report of two most selling days.
+        """
         self.mycursor.close()
         self.db.reconnect()
         self.mycursor = self.db.cursor(dictionary=True)
@@ -346,6 +384,11 @@ class SaleModel:
         return make_response({"REPORT":dic}, 200)
     
     def most_selling_hours(self):
+        """
+        Calculate and perform analysis on sales and generate report of three most selling hours (peak hours) by week, month, and year period.
+        Return:
+                Dict/JSON: A dictionary containing the report of peak hours.
+        """
         self.mycursor.close()
         self.db.reconnect()
         self.mycursor = self.db.cursor(dictionary=True)
@@ -421,12 +464,17 @@ class SaleModel:
         return make_response({"REPORT":dic}, 200)
 
     def delta_percentage_by_months(self):
+        """
+        Calculate and perform analysis on sales and generate report of three most selling hours (peak hours) by week, month, and year period.
+        Return:
+                Dict/JSON: A dictionary containing the report of peak hours.
+        """
         self.mycursor.close()
         self.db.reconnect()
         self.mycursor = self.db.cursor(dictionary=True)
-        self.mycursor.execute("SELECT MONTH(DATE)as month, SUM(price) as price FROM SALES GROUP BY MONTH(DATE)")
+        self.mycursor.execute("SELECT MONTH(DATE) as month, SUM(price) as price FROM SALES GROUP BY MONTH(DATE)")
         sales_delta = SaleModel.growth_percentage_calculator(sorted(self.mycursor.fetchall(),key=lambda x : x["month"]))
 
         print(sales_delta)
 
-        return make_response({"SALES PERCENTAGE DELTA":sales_delta},200)
+        return make_response({"SALES PERCENTAGE DELTA":sales_delta}, 200)
