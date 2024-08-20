@@ -24,7 +24,7 @@ Docker Compose
 USING DOCKERS:-
 
 (For running containers use this docker compose command)
-"docker compose up -d"
+"docker compose up --build -d"
 
 # Documentation
 (swagger documentation is still in development. Soon will be released)
