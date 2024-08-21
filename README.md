@@ -15,7 +15,7 @@ Product Sale Monitor: Monitor products sales and growth.
 # Prerequisites
 Ensure you have the following installed:
 
-Python 3.x
+Python 3.12
 Docker
 Docker Compose
 
