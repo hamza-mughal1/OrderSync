@@ -22,9 +22,12 @@ Docker Compose
 # Getting Started
 
 USING DOCKERS:-
-
 (For running containers use this docker compose command)
 "docker compose up --build -d"
+
+login:-
+username: admin
+password: secureadmin
 
 # Documentation
 (swagger documentation is still in development. Soon will be released)
