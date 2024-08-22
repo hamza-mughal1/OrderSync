@@ -25,6 +25,9 @@ class AuthModel:
         Returns:
             decorator: A decorator that wraps the view function for token authentication.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         ed = endpoint
 
         def decorator(func):

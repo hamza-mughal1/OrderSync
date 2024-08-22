@@ -71,6 +71,9 @@ class UserModel:
         return:
             New refresh and acess token (type JSON) containing both tokens
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         # Read header of the request and fetch tokens if available
         authorization = request.headers.get("Authorization")
         if (
@@ -164,6 +167,9 @@ class UserModel:
         Login user
         Check if the credentials are correct then return refresh and access tokens.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         re_fields = {"user_name": "--", "password": "--"}
 
         if not UserModel.has_required_pairs(user_details, re_fields):
@@ -236,6 +242,9 @@ class UserModel:
         algorithm: Delete access and refresh token from the DB, when the user try to use token next time he will be unable to,
         so he will have to login again.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         authorization = request.headers.get("Authorization")
         if (
             re.match("^Bearer *([^ ]+) *Refresh *([^ ]+) *$", authorization, flags=0)
@@ -290,6 +299,9 @@ class UserModel:
         Logout from all devices
         algorithm: Delete all tokens of the user from the DB
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         authorization = request.headers.get("Authorization")
         if (
             re.match("^Bearer *([^ ]+) *Refresh *([^ ]+) *$", authorization, flags=0)
@@ -357,6 +369,9 @@ class UserModel:
                                 "user_role": "--",
                             }
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         re_fields = {
             "user_name": "--",
             "name": "--",
@@ -412,6 +427,9 @@ class UserModel:
                                 "user_name": "--"
                             }
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         re_fields = {"user_name": "--"}
 
         if not UserModel.has_required_pairs(user_details, re_fields):

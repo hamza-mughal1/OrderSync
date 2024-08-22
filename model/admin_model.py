@@ -30,6 +30,9 @@ class AdminModel:
         :param endpoint_data: A dictionary containing endpoint information.
         :return: A response indicating the success or failure of the operation.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         re_fields = {"endpoint": "--", "method": "--", "roles": "--"}
 
         if not type(endpoint_data) == dict:
@@ -80,6 +83,9 @@ class AdminModel:
         :param endpoint_data: A dictionary containing the updated endpoint information.
         :return: A response indicating the success or failure of the operation.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         re_fields = {
             "old_endpoint": "--",
             "endpoint": "--",
@@ -130,6 +136,9 @@ class AdminModel:
         :param endpoint_data: A dictionary containing the endpoint information to delete.
         :return: A response indicating the success or failure of the operation.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         re_fields = {
             "endpoint": "--",
         }
@@ -162,6 +171,9 @@ class AdminModel:
         :param role_data: A dictionary containing role information.
         :return: A response indicating the success or failure of the operation.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         re_fields = {
             "role": "--",
         }
@@ -194,6 +206,9 @@ class AdminModel:
         :param role_data: A dictionary containing the updated role information.
         :return: A response indicating the success or failure of the operation.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         re_fields = {
             "old_role": "--",
             "role": "--",
@@ -228,6 +243,9 @@ class AdminModel:
         :param role_data: A dictionary containing the role information to delete.
         :return: A response indicating the success or failure of the operation.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         re_fields = {
             "role": "--",
         }

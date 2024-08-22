@@ -38,6 +38,9 @@ class OrderModel:
         Returns:
             flask.Response: A response object indicating the result of the operation.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         re_fields = {
             "products": "--",
             "sale_discount_per": "--",

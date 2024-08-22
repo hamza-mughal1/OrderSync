@@ -65,6 +65,9 @@ class SaleModel:
         Returns:
             dict: A dictionary containing all the sales
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         sales_dic = []
         self.mycursor.execute("SELECT * FROM SALES")
 
@@ -116,6 +119,9 @@ class SaleModel:
         Returns:
             Dict/JSON: A dictionary containing sales revenue report by day, week, month, and year period.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         try:
             self.mycursor.execute(
                 "SELECT SUM(price) AS revenue FROM sales WHERE DATE(sales.date) = CURDATE()"

@@ -41,6 +41,9 @@ class InformationModel:
         Returns:
             dict: A dictionary with a list of roles.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         self.mycursor.execute("SELECT role FROM roles")
         return {"ROLES": list(map(lambda x: x["role"], self.mycursor.fetchall()))}
 
@@ -51,6 +54,9 @@ class InformationModel:
         Returns:
             Response: A Flask response object with a list of endpoints and HTTP status code.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         authorization = request.headers.get("Authorization")
         try:
             if re.match("^Bearer *([^ ]+) *$", authorization, flags=0) == None:

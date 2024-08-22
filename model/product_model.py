@@ -39,6 +39,9 @@ class ProductModel:
         Returns:
             Response: A JSON response containing the products.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         self.mycursor.execute(
             "SELECT products.id as product_id, products.name as product_name, categories.name as category_name, products.price as product_price  FROM products INNER JOIN categories ON products.category_id = categories.id WHERE products.toggle = 1 and categories.toggle = 1 LIMIT %s OFFSET %s",
             (self.page_limit, self.page_limit * page),
@@ -55,6 +58,9 @@ class ProductModel:
         Returns:
             Response: A JSON response indicating success or failure.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         re_fields = {
             "category_name": "--",
             "name": "--",
@@ -95,6 +101,9 @@ class ProductModel:
         Returns:
             Response: A JSON response indicating success or failure.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         re_fields = {"name": "--"}
 
         if not type(product_details) == dict:
@@ -155,6 +164,9 @@ class ProductModel:
         Returns:
             Response: A JSON response indicating success or failure.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         self.mycursor.execute("SELECT * FROM products WHERE name = %s", (product,))
         if len(self.mycursor.fetchall()) < 1:
             return make_response({"ERROR": "PRODUCT NOT FOUND"}, 404)
@@ -175,6 +187,9 @@ class ProductModel:
         Returns:
             Response: A JSON response containing the products in the specified category.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         if category == "None":
             return make_response({"ERROR": "NO CATEGORY WAS PROVIDED"}, 401)
 
@@ -201,6 +216,9 @@ class ProductModel:
         Returns:
             Response: A JSON response containing the products within the specified price range.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         self.mycursor.execute(
             "SELECT name, price FROM products WHERE price > %s and price < %s",
             (start, range),
@@ -218,6 +236,9 @@ class ProductModel:
         Returns:
             Response: A JSON response indicating success or failure.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         allowed_file_ext = ["jpg", "png"]
         file = list(dict(files).values())[0]
         unique_file_name = str(datetime.now().timestamp()).replace(".", "")
@@ -265,6 +286,9 @@ class ProductModel:
         Returns:
             Response: The image file or an error message if not found.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         self.mycursor.close()
         self.db.reconnect()
         self.mycursor = self.db.cursor(dictionary=True)

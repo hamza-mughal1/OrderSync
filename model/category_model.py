@@ -21,6 +21,9 @@ class CategoryModel:
         Returns:
             Response: A Flask response object with a message and HTTP status code.
         """
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
         # Check if the category exists in the database
         self.mycursor.execute("SELECT * FROM categories WHERE name = %s", (category,))
         if len(self.mycursor.fetchall()) < 1:
