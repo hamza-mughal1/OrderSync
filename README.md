@@ -21,20 +21,24 @@ Docker Compose
 
 # Getting Started
 
-USING DOCKERS:-
-(For running containers use this docker compose command)
+USING DOCKERS:- <br>
+(For running containers use this docker compose command) <br>
 "docker compose up --build -d"
 
 login:-
-username: admin
+<br>
+username: admin <br>
 password: secureadmin
 
 # Documentation
-(swagger documentation is still in development. Soon will be released)
+Access the documentation on "[url of your server]/api/docs" <br>
+If you are running it locally on your machine then use "localhost:3000/api/docs" <br> 
+(note: port must be same to the port you are running your flask app on. In this case I am running it on '3000')
+<br>
+<h3 style="color:red;">(swagger documentation is still in development stage)</h3>
 
 # Contribution
 All development was done by "Hamza Mughal"
 
 # Contact
-
 Feel free to contribute or contact for any discussion.
