@@ -30,7 +30,9 @@ username: admin
 password: secureadmin
 
 # Documentation
-(swagger documentation is still in development. Soon will be released)
+Access the documentation by "[url for your server]/api/docs"
+If you are running it locally on your machine then use "localhost:3000/api/docs" (note: port must be same to the port you are running your flask app on. In this case I am running it on '3000')
+(swagger documentation is still in development)
 
 # Contribution
 All development was done by "Hamza Mughal"
