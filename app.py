@@ -12,15 +12,7 @@ API_URL = "/static/swagger.json"  # Our API url (can of course be a local resour
 swaggerui_blueprint = get_swaggerui_blueprint(
     SWAGGER_URL,  # Swagger UI static files will be mapped to '{SWAGGER_URL}/dist/'
     API_URL,
-    config={"app_name": "OrderSync"},  # Swagger UI config overrides
-    # oauth_config={  # OAuth config. See https://github.com/swagger-api/swagger-ui#oauth2-configuration .
-    #    'clientId': "your-client-id",
-    #    'clientSecret': "your-client-secret-if-required",
-    #    'realm': "your-realms",
-    #    'appName': "your-app-name",
-    #    'scopeSeparator': " ",
-    #    'additionalQueryStringParams': {'test': "hello"}
-    # }
+    config={"app_name": "OrderSync"},
 )
 
 app.register_blueprint(swaggerui_blueprint)
