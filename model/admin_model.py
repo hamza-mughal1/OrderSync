@@ -180,7 +180,7 @@ class AdminModel:
 
         if not type(role_data) == dict:
             return make_response(
-                {"ERROR": "ONLY JSON DICTIONARY/HASHMAP IS ALLOWED"}, 400
+                {"ERROR": "ONLY JSON/DICTIONARY/HASHMAP IS ALLOWED"}, 400
             )
 
         if not AdminModel.has_required_pairs(role_data, re_fields):
@@ -252,7 +252,7 @@ class AdminModel:
 
         if not type(role_data) == dict:
             return make_response(
-                {"ERROR": "ONLY JSON DICTIONARY/HASHMAP IS ALLOWED"}, 400
+                {"ERROR": "ONLY JSON/DICTIONARY/HASHMAP IS ALLOWED"}, 400
             )
 
         if not AdminModel.has_required_pairs(role_data, re_fields):
