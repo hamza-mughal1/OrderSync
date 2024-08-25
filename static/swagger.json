@@ -1,266 +1,103 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-      "title": "OrderSync",
-      "description": "The OrderSync API is designed to facilitate seamless and efficient order management across various platforms and sales channels. It enables businesses to synchronize orders, manage inventory, and ensure accurate fulfillment in real-time.\n\n<h3>Key Features:</h3>\n\nOrder Synchronization: Automatically sync orders from multiple platforms, ensuring all orders are up-to-date and accurately reflected in the system.\n\n<h3>Order Fulfillment:</h3>\n\nStreamline the order fulfillment process by automatically updating order statuses and tracking details.\n\n<h3>Error Handling:</h3>\n\nRobust error handling mechanisms ensure that any issues in synchronization or fulfillment are quickly identified and resolved.\n\n<h3>Scalability:</h3>\n\nDesigned to scale with your business, handling high volumes of orders efficiently without compromising performance.\n\n<h3>Security:</h3> \n\nSecure communication between services is ensured through the use of JWT-based authentication and HTTPS requests.\n\n<h3>Check out the my GitHub [Profile](https://github.com/hamza-mughal1)</h3>",
-      "contact": {
-        "email": "hamzaxd1123@gmail.com",
-        "name": "Hamza Mughal",
-        "url": "https://hamza-mughal1.github.io/portfolio/"
-      },
-      "license": {
-        "name": "Custom license",
-        "url": "https://github.com/hamza-mughal1/OrderSync/blob/main/LICENSE"
-      },
-      "version": "0.0.1"
+  "openapi": "3.0.0",
+  "info": {
+    "title": "OrderSync",
+    "description": "The OrderSync API is designed to facilitate seamless and efficient order management across various platforms and sales channels. It enables businesses to synchronize orders, manage inventory, and ensure accurate fulfillment in real-time.\n\n<h3>Key Features:</h3>\n\nOrder Synchronization: Automatically sync orders from multiple platforms, ensuring all orders are up-to-date and accurately reflected in the system.\n\n<h3>Order Fulfillment:</h3>\n\nStreamline the order fulfillment process by automatically updating order statuses and tracking details.\n\n<h3>Error Handling:</h3>\n\nRobust error handling mechanisms ensure that any issues in synchronization or fulfillment are quickly identified and resolved.\n\n<h3>Scalability:</h3>\n\nDesigned to scale with your business, handling high volumes of orders efficiently without compromising performance.\n\n<h3>Security:</h3> \n\nSecure communication between services is ensured through the use of JWT-based authentication and HTTPS requests.\n\n<h3>Check out the my GitHub [Profile](https://github.com/hamza-mughal1)</h3>",
+    "contact": {
+      "email": "hamzaxd1123@gmail.com",
+      "name": "Hamza Mughal",
+      "url": "https://hamza-mughal1.github.io/portfolio/"
     },
-    "tags": [
-      {
-        "name": "Admin",
-        "description": "Admin controls"
-      },
-      {
-        "name": "Category",
-        "description": "All functionalities realated to categories"
-      },
-      {
-        "name": "Information",
-        "description": "To get information about API (allowed endpoints, all roles, etc)"
-      }
-    ],
-    "paths": {
-      "/admin/endpoints": {
-        "post": {
-          "tags": [
-            "Admin"
-          ],
-          "summary": "Add a new endpoint in the database",
-          "description": "When you create a new endpoint in the API so in order to make it available for authentication you have to add it into the database using this endpoint.",
-          "operationId": "addEndpointToTheDatabase",
-          "requestBody": {
-            "description": "Json containing information about the endpoint to be added",
-            "content": {
-              "json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "endpoint": {
-                      "type": "string",
-                      "example": "/this/is/an/example/endpoint"
-                    },
-                    "method": {
-                      "type": "string",
-                      "example": "POST"
-                    },
-                    "roles": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "example": [
-                        "admin"
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "ENDPOINT HAS BEEN ADDED SUCCESSFULLY",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
+    "license": {
+      "name": "Custom license",
+      "url": "https://github.com/hamza-mughal1/OrderSync/blob/main/LICENSE"
+    },
+    "version": "0.0.1"
+  },
+  "tags": [
+    {
+      "name": "Admin",
+      "description": "Admin controls"
+    },
+    {
+      "name": "Category",
+      "description": "All functionalities realated to categories"
+    },
+    {
+      "name": "Information",
+      "description": "To get information about API (allowed endpoints, all roles, etc)"
+    },
+    {
+      "name": "Orders",
+      "description": "All functionalities related to orders"
+    }
+  ],
+  "paths": {
+    "/admin/endpoints": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Add a new endpoint in the database",
+        "description": "When you create a new endpoint in the API so in order to make it available for authentication you have to add it into the database using this endpoint.",
+        "operationId": "addEndpointToTheDatabase",
+        "requestBody": {
+          "description": "Json containing information about the endpoint to be added",
+          "content": {
+            "json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "endpoint": {
+                    "type": "string",
+                    "example": "/this/is/an/example/endpoint"
+                  },
+                  "method": {
+                    "type": "string",
+                    "example": "POST"
+                  },
+                  "roles": {
+                    "type": "array",
                     "items": {
                       "type": "string"
                     },
-                    "example": {
-                      "MESSAGE": "ENDPOINT HAS BEEN ADDED SUCCESSFULLY"
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": "INVALID PARAMETERS",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": {
-                      "ERROR": "INVALID PARAMETERS"
-                    }
+                    "example": [
+                      "admin"
+                    ]
                   }
                 }
               }
             }
           }
         },
-        "put": {
-          "tags": [
-            "Admin"
-          ],
-          "summary": "update an endpoint in the database",
-          "description": "You can update an endpoint in the database using this endpoint.",
-          "operationId": "editEndpointInTheDatabase",
-          "requestBody": {
-            "description": "Json containing all the information of the endpoint to be updated",
+        "responses": {
+          "201": {
+            "description": "ENDPOINT HAS BEEN ADDED SUCCESSFULLY",
             "content": {
               "json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "old_endpoint": {
-                      "type": "string",
-                      "example": "/this/is/an/example/endpoint"
-                    },
-                    "endpoint": {
-                      "type": "string",
-                      "example": "/this/is/a/new/example/endpoint"
-                    },
-                    "method": {
-                      "type": "string",
-                      "example": "POST"
-                    },
-                    "roles": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "example": [
-                        "admin",
-                        "user"
-                      ]
-                    }
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "MESSAGE": "ENDPOINT HAS BEEN ADDED SUCCESSFULLY"
                   }
                 }
               }
             }
           },
-          "responses": {
-            "201": {
-              "description": "ENDPOINT HAS BEEN UPDATED SUCCESSFULLY",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": {
-                      "MESSAGE": "ENDPOINT HAS BEEN UPDATED SUCCESSFULLY"
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": "INVALID PARAMETERS",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": {
-                      "ERROR": "INVALID PARAMETERS"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "delete": {
-          "tags": [
-            "Admin"
-          ],
-          "summary": "delete an endpoint from the database",
-          "description": "You can delete an endpoint from the database using this endpoint.",
-          "operationId": "deleteEndpointFromTheDatabase",
-          "requestBody": {
-            "description": "Json containing the name/path of the endpoint to be deleted",
+          "400": {
+            "description": "INVALID PARAMETERS",
             "content": {
               "json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "endpoint": {
-                      "type": "string",
-                      "example": "/this/is/a/new/example/endpoint"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "responses": {
-            "200": {
-              "description": "ENDPOINT HAS BEEN DELETED",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": {
-                      "MESSAGE": "'ENDPOINT' HAS BEEN DELETED"
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": "INVALID PARAMETERS",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": {
-                      "ERROR": "ONLY JSON DICTIONARY/HASHMAP IS ALLOWED"
-                    }
-                  }
-                }
-              }
-            },
-            "401": {
-              "description": "UNAUTHORIZED",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": {
-                      "ERROR": "UNAUTHORIZED"
-                    }
-                  }
-                }
-              }
-            },
-            "404": {
-              "description": "NOT FOUND",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": {
-                      "ERROR": "ENDPOINT NOT FOUND"
-                    }
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "ERROR": "INVALID PARAMETERS"
                   }
                 }
               }
@@ -268,274 +105,712 @@
           }
         }
       },
-      "/admin/roles": {
-        "post": {
-          "tags": [
-            "Admin"
-          ],
-          "summary": "add a new role in the database",
-          "description": "You can create a new role for the API by using this endpoint.",
-          "operationId": "addRoleInTheDatabase",
-          "requestBody": {
-            "description": "Json containing name of the role",
-            "content": {
-              "json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "role": {
-                      "type": "string",
-                      "example": "exampleRole"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "ROLE HAS BEEN ADDED SUCCESSFULLY",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
+      "put": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "update an endpoint in the database",
+        "description": "You can update an endpoint in the database using this endpoint.",
+        "operationId": "editEndpointInTheDatabase",
+        "requestBody": {
+          "description": "Json containing all the information of the endpoint to be updated",
+          "content": {
+            "json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "old_endpoint": {
+                    "type": "string",
+                    "example": "/this/is/an/example/endpoint"
+                  },
+                  "endpoint": {
+                    "type": "string",
+                    "example": "/this/is/a/new/example/endpoint"
+                  },
+                  "method": {
+                    "type": "string",
+                    "example": "POST"
+                  },
+                  "roles": {
+                    "type": "array",
                     "items": {
                       "type": "string"
                     },
-                    "example": {
-                      "MESSAGE": "'ROLE' HAS BEEN ADDED SUCCESSFULLY"
-                    }
-                  }
-                }
-              }
-            },
-            "209": {
-              "description": "ROLE ALREADY EXISTS",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": {
-                      "ERROR": "ROLE ALREADY EXISTS"
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": "INVALID PARAMETERS",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": {
-                      "ERROR": "ONLY JSON/DICTIONARY/HASHMAP IS ALLOWED"
-                    }
-                  }
-                }
-              }
-            },
-            "401": {
-              "description": "UNAUTHORIZED",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": {
-                      "ERROR": "UNAUTHORIZED"
-                    }
+                    "example": [
+                      "admin",
+                      "user"
+                    ]
                   }
                 }
               }
             }
           }
         },
-        "put": {
-          "tags": [
-            "Admin"
-          ],
-          "summary": "update a role in the database",
-          "description": "You can update a role in the database using this endpoint.",
-          "operationId": "editRoleInTheDatabase",
-          "requestBody": {
-            "description": "Json containing names of the old and new roles",
+        "responses": {
+          "201": {
+            "description": "ENDPOINT HAS BEEN UPDATED SUCCESSFULLY",
             "content": {
               "json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "old_role": {
-                      "type": "string",
-                      "example": "exampleRole"
-                    },
-                    "role": {
-                      "type": "string",
-                      "example": "newExampleRole"
-                    }
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "MESSAGE": "ENDPOINT HAS BEEN UPDATED SUCCESSFULLY"
                   }
                 }
               }
             }
           },
-          "responses": {
-            "200": {
-              "description": "ROLE HAS BEEN UPDATED SUCCESSFULLY",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": {
-                      "MESSAGE": "'ROLE' HAS BEEN UPDATED SUCCESSFULLY"
-                    }
+          "400": {
+            "description": "INVALID PARAMETERS",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "ERROR": "INVALID PARAMETERS"
                   }
                 }
               }
-            },
-            "400": {
-              "description": "INVALID PARAMETERS",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": {
-                      "ERROR": "ONLY JSON/DICTIONARY/HASHMAP IS ALLOWED"
-                    }
-                  }
-                }
-              }
-            },
-            "401": {
-              "description": "UNAUTHORIZED",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": {
-                      "ERROR": "UNAUTHORIZED"
-                    }
-                  }
-                }
-              }
-            },
-            "404": {
-              "description": "ROLE NOT FOUND",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": {
-                      "ERROR": "ROLE NOT FOUND"
-                    }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "delete an endpoint from the database",
+        "description": "You can delete an endpoint from the database using this endpoint.",
+        "operationId": "deleteEndpointFromTheDatabase",
+        "requestBody": {
+          "description": "Json containing the name/path of the endpoint to be deleted",
+          "content": {
+            "json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "endpoint": {
+                    "type": "string",
+                    "example": "/this/is/a/new/example/endpoint"
                   }
                 }
               }
             }
           }
         },
-        "delete": {
-          "tags": [
-            "Admin"
-          ],
-          "summary": "delete a role from the database",
-          "description": "You can delete a role from the database using this endpoint.",
-          "operationId": "deleteRoleFromTheDatabase",
-          "requestBody": {
-            "description": "Json containing the name/path of the role to be deleted",
+        "responses": {
+          "200": {
+            "description": "ENDPOINT HAS BEEN DELETED",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "MESSAGE": "'ENDPOINT' HAS BEEN DELETED"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID PARAMETERS",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "ERROR": "ONLY JSON DICTIONARY/HASHMAP IS ALLOWED"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHORIZED",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "ERROR": "UNAUTHORIZED"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NOT FOUND",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "ERROR": "ENDPOINT NOT FOUND"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/roles": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "add a new role in the database",
+        "description": "You can create a new role for the API by using this endpoint.",
+        "operationId": "addRoleInTheDatabase",
+        "requestBody": {
+          "description": "Json containing name of the role",
+          "content": {
+            "json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "role": {
+                    "type": "string",
+                    "example": "exampleRole"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "ROLE HAS BEEN ADDED SUCCESSFULLY",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "MESSAGE": "'ROLE' HAS BEEN ADDED SUCCESSFULLY"
+                  }
+                }
+              }
+            }
+          },
+          "209": {
+            "description": "ROLE ALREADY EXISTS",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "ERROR": "ROLE ALREADY EXISTS"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID PARAMETERS",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "ERROR": "ONLY JSON/DICTIONARY/HASHMAP IS ALLOWED"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHORIZED",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "ERROR": "UNAUTHORIZED"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "update a role in the database",
+        "description": "You can update a role in the database using this endpoint.",
+        "operationId": "editRoleInTheDatabase",
+        "requestBody": {
+          "description": "Json containing names of the old and new roles",
+          "content": {
+            "json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "old_role": {
+                    "type": "string",
+                    "example": "exampleRole"
+                  },
+                  "role": {
+                    "type": "string",
+                    "example": "newExampleRole"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ROLE HAS BEEN UPDATED SUCCESSFULLY",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "MESSAGE": "'ROLE' HAS BEEN UPDATED SUCCESSFULLY"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID PARAMETERS",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "ERROR": "ONLY JSON/DICTIONARY/HASHMAP IS ALLOWED"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHORIZED",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "ERROR": "UNAUTHORIZED"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ROLE NOT FOUND",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "ERROR": "ROLE NOT FOUND"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "delete a role from the database",
+        "description": "You can delete a role from the database using this endpoint.",
+        "operationId": "deleteRoleFromTheDatabase",
+        "requestBody": {
+          "description": "Json containing the name/path of the role to be deleted",
+          "content": {
+            "json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "endpoint": {
+                    "type": "string",
+                    "example": "exampleRole"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ROLE HAS BEEN DELETED SUCCESSFULLY",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "MESSAGE": "'ROLE' HAS BEEN DELETED SUCCESSFULLY"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID PARAMETERS",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "ERROR": "ONLY JSON/DICTIONARY/HASHMAP IS ALLOWED"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHORIZED",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "ERROR": "UNAUTHORIZED"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ROLE NOT FOUND",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "ERROR": "ROLE NOT FOUND"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/category-toggle": {
+      "patch": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "category",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Category name to toggle 'on' and 'off'"
+          }
+        ],
+        "tags": [
+          "Category"
+        ],
+        "summary": "Toggle any category ('on' or 'off')",
+        "description": "You can toggle any category 'on' or 'off' using this endpoint. It will toggle 'on' if it is currently 'off' and will toggle 'off' if it is currently 'on'.",
+        "operationId": "toggleCategory",
+        "responses": {
+          "200": {
+            "description": "CATEGORY TOGGLE HAS UPDATED SUCCESSFULLY",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "MESSAGE": "CATEGORY TOGGLE HAS UPDATED SUCCESSFULLY"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "CATEGORY NOT FOUND",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "ERROR": "CATEGORY NOT FOUND"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/information/all-roles": {
+      "get": {
+        "tags": [
+          "Information"
+        ],
+        "summary": "get all roles list",
+        "description": "By this endpoint you can get the list of all roles.",
+        "operationId": "getAllRoles",
+        "responses": {
+          "200": {
+            "description": "CATEGORY TOGGLE HAS UPDATED SUCCESSFULLY",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "array"
+                  },
+                  "example": {
+                    "ROLES": [
+                      "admin",
+                      "user"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/information.all-endpoints": {
+      "get": {
+        "tags": [
+          "Information"
+        ],
+        "summary": "get the list of all allowed endpoints",
+        "description": "Get the list of all allowed endpoints to the role who is accesssing the endpoint.",
+        "operationId": "getAllEndpointsAllowed",
+        "responses": {
+          "200": {
+            "description": "LIST OF ALL THE ENDPOINTS ALLOWED",
             "content": {
               "json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "endpoint": {
+                    "ENDPOINTS": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "endpoint": {
+                            "type": "string"
+                          },
+                          "method": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "ENDPOINTS": [
+                    {
+                      "endpoint": "/this/is/an/endpoint",
+                      "method": "GET"
+                    },
+                    {
+                      "endpoint": "/this/is/another/endpoint",
+                      "method": "POST"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/place": {
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "place order",
+        "description": "You can place an order by using this endpoint.",
+        "operationId": "placeOrder",
+        "requestBody": {
+          "description": "Json containing all the data required to place an order.",
+          "content": {
+            "json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "products": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "product_name": {
+                          "type": "string",
+                          "example": "myproduct"
+                        },
+                        "quantity": {
+                          "type": "integer",
+                          "example": 2
+                        },
+                        "product_discount_per": {
+                          "type": "integer",
+                          "example": 0
+                        },
+                        "product_discount_desc": {
+                          "type": "string",
+                          "example": "None"
+                        }
+                      }
+                    }
+                  },
+                  "sale_discount_per": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "sale_discount_desc": {
+                    "type": "string",
+                    "example": "None"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order placed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "MESSAGE": {
                       "type": "string",
-                      "example": "exampleRole"
+                      "example": "ORDER HAS BEEN PLACED"
                     }
                   }
                 }
               }
             }
           },
-          "responses": {
-            "200": {
-              "description": "ROLE HAS BEEN DELETED SUCCESSFULLY",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": {
-                      "MESSAGE": "'ROLE' HAS BEEN DELETED SUCCESSFULLY"
+          "400": {
+            "description": "Bad request, invalid JSON or parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "INVALID PARAMETERS"
                     }
                   }
                 }
               }
-            },
-            "400": {
-              "description": "INVALID PARAMETERS",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": {
-                      "ERROR": "ONLY JSON/DICTIONARY/HASHMAP IS ALLOWED"
+            }
+          },
+          "401": {
+            "description": "Unauthorized, invalid request or credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "UNAUTHORIZED"
                     }
                   }
                 }
               }
-            },
-            "401": {
-              "description": "UNAUTHORIZED",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": {
-                      "ERROR": "UNAUTHORIZED"
+            }
+          },
+          "404": {
+            "description": "Not found, product or user not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "PRODUCT NOT FOUND"
                     }
                   }
                 }
               }
-            },
-            "404": {
-              "description": "ROLE NOT FOUND",
-              "content": {
-                "json": {
-                  "schema": {
-                    "type": "object",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": {
-                      "ERROR": "ROLE NOT FOUND"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "INTERNAL SERVER ERROR"
                     }
                   }
                 }
@@ -546,3 +821,4 @@
       }
     }
   }
+}
