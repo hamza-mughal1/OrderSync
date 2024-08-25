@@ -50,7 +50,7 @@ class OrderModel:
         # Check if sale_details is a dictionary and has required fields
         if not type(sale_details) == dict:
             return make_response(
-                {"ERROR": "ONLY JSON DICTIONARY/HASHMAP IS ALLOWED"}, 400
+                {"ERROR": "ONLY JSON/DICTIONARY/HASHMAP IS ALLOWED"}, 400
             )
 
         if not OrderModel.has_required_pairs(sale_details, re_fields):
@@ -110,22 +110,12 @@ class OrderModel:
                 i["product_discount_per"] / 100
             ) * (result_cursor["price"] * i["quantity"])
 
-        # Validate and decode the token
+        # Decode the token
         authorization = request.headers.get("authorization")
-        try:
-            if re.match("^Bearer *([^ ]+) *$", authorization, flags=0) == None:
-                return make_response({"ERROR": "INVALID_TOKEN"}, 401)
-        except TypeError:
-            return make_response({"ERROR": "TOKEN NOT FOUND"}, 400)
 
         token = authorization.split(" ")[1]
-        try:
-            tokendata = jwt.decode(token, secret_key, algorithms="HS256")
-        except Exception as e:
-            return make_response({"ERROR": str(e).upper()}, 401)
 
-        if tokendata["payload"]["token_role"] != "access-token":
-            return make_response({"ERROR": "Forbidden"}, 403)
+        tokendata = jwt.decode(token, secret_key, algorithms="HS256")
 
         user_id = tokendata["payload"]["id"]
 
