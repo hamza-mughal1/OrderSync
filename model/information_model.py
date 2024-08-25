@@ -45,7 +45,7 @@ class InformationModel:
         self.db.reconnect()
         self.mycursor = self.db.cursor(dictionary=True)
         self.mycursor.execute("SELECT role FROM roles")
-        return {"ROLES": list(map(lambda x: x["role"], self.mycursor.fetchall()))}
+        return make_response({"ROLES": list(map(lambda x: x["role"], self.mycursor.fetchall()))}, 200)
 
     def all_endpoints(self):
         """
@@ -58,12 +58,7 @@ class InformationModel:
         self.db.reconnect()
         self.mycursor = self.db.cursor(dictionary=True)
         authorization = request.headers.get("Authorization")
-        try:
-            if re.match("^Bearer *([^ ]+) *$", authorization, flags=0) == None:
-                return make_response({"ERROR": "INVALID_TOKEN"}, 401)
-        except TypeError:
-            return make_response({"ERROR": "TOKEN NOT FOUND"}, 400)
-
+        
         _, jwt_token = authorization.split(" ")
 
         token_data = jwt.decode(jwt_token, secret_key, algorithms="HS256")
