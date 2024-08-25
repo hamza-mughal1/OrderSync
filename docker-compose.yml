@@ -10,8 +10,8 @@ services:
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 20s
-      timeout: 5s
-      retries: 3
+      timeout: 10s
+      retries: 5
 
   flaskapp:
     build: ./
