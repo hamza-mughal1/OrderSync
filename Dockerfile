@@ -11,5 +11,6 @@ COPY ./images /images
 COPY ./app.py /app.py
 COPY ./handler /handler
 COPY ./model /model
+COPY ./static /static
 
 CMD ["python3", "/app.py"]
