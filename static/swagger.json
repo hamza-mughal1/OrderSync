@@ -38,6 +38,10 @@
     {
       "name": "Sales",
       "description": "All functionalities related to sales"
+    },
+    {
+      "name": "Users",
+      "description": "All functionalities related to users"
     }
   ],
   "paths": {
@@ -2187,6 +2191,427 @@
                     "ERROR": {
                       "type": "string",
                       "example": "INTERNAL SERVER ERROR"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/login": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Login a user",
+        "description": "Verify user credentials and return access and refresh tokens if valid.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_name": {
+                    "type": "string",
+                    "example": "admin"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "secureadmin"
+                  }
+                },
+                "required": [
+                  "user_name",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "description": "Access token"
+                    },
+                    "refresh-token": {
+                      "type": "string",
+                      "description": "Refresh token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized, invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "Login failed: Wrong username or password"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/refresh": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Refresh JWT token",
+        "description": "Refresh the JWT token using the refresh token provided in the header. format (\"Bearer <jwt_token> Refresh <refresh_token>\")",
+        "responses": {
+          "200": {
+            "description": "Successful token refresh",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "description": "New access token"
+                    },
+                    "refresh-token": {
+                      "type": "string",
+                      "description": "New refresh token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JWT token or expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "CURRENT JWT IS STILL VALID"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized, invalid tokens",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "INVALID_TOKEN"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/logout": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Logout a user",
+        "description": "Log out the user by invalidating the access and refresh tokens. provided in the header format (\"Bearer <jwt_token> Refresh <refresh_token>\")",
+        "responses": {
+          "200": {
+            "description": "Successful logout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "MESSAGE": {
+                      "type": "string",
+                      "example": "YOU HAVE LOGGED OUT SUCCESSFULLY"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized, invalid or expired tokens",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "INVALID_TOKEN"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/logout-all": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Logout from all sessions",
+        "description": "Log out the user from all active sessions by invalidating all tokens. header format (\"Bearer <jwt_token> Refresh <refresh_token>\")",
+        "responses": {
+          "200": {
+            "description": "Successful logout from all sessions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "MESSAGE": {
+                      "type": "string",
+                      "example": "YOU HAVE LOGGED OUT SUCCESSFULLY"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized, invalid or expired tokens",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "INVALID_TOKEN"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/users": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Create a new user",
+        "description": "Register a new user with the provided details.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_name": {
+                    "type": "string",
+                    "example": "johndoe"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  },
+                  "user_role": {
+                    "type": "string",
+                    "example": "user"
+                  }
+                },
+                "required": [
+                  "user_name",
+                  "name",
+                  "password",
+                  "user_role"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "MESSAGE": {
+                      "type": "string",
+                      "example": "USER HAS BEEN REGISTERED SUCCESSFULLY"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, incorrect parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "INCORRECT PARAMETERS"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized, missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "UNAUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found, role not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "ROLE NOT FOUND"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict, username already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "USERNAME ALREADY EXISTS"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Delete a user",
+        "description": "Remove a user from the system.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_name": {
+                    "type": "string",
+                    "example": "johndoe"
+                  }
+                },
+                "required": [
+                  "user_name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "MESSAGE": {
+                      "type": "string",
+                      "example": "USER HAS BEEN DELETED SUCCESSFULLY"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, user not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "NO USER FOUND"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized, missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "UNAUTHORIZED"
                     }
                   }
                 }
