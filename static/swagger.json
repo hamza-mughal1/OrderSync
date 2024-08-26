@@ -33,7 +33,11 @@
     },
     {
       "name": "Products",
-      "description": "All functionalitirs realted to product management"
+      "description": "All functionalities related to product management"
+    },
+    {
+      "name": "Sales",
+      "description": "All functionalities related to sales"
     }
   ],
   "paths": {
@@ -1497,6 +1501,692 @@
                     "ERROR": {
                       "type": "string",
                       "example": "'PRODUCT NOT FOUND' or 'IMAGE NOT FOUND'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales/sales": {
+      "get": {
+        "tags": [
+          "Sales"
+        ],
+        "summary": "Retrieve all sales data",
+        "description": "Returns a list of all sales with detailed information, including products involved, prices, discounts, and sale details.",
+        "responses": {
+          "200": {
+            "description": "A list of all sales with detailed information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "SALES": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "products": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "product_name": {
+                                  "type": "string",
+                                  "example": "Product A"
+                                },
+                                "quantity": {
+                                  "type": "integer",
+                                  "example": 3
+                                },
+                                "product_price": {
+                                  "type": "number",
+                                  "format": "float",
+                                  "example": 20
+                                },
+                                "total_price": {
+                                  "type": "number",
+                                  "format": "float",
+                                  "example": 60
+                                },
+                                "discount_percentage": {
+                                  "type": "number",
+                                  "format": "float",
+                                  "example": 10
+                                },
+                                "discount_price": {
+                                  "type": "number",
+                                  "format": "float",
+                                  "example": 54
+                                },
+                                "discount_description": {
+                                  "type": "string",
+                                  "example": "10% off"
+                                }
+                              }
+                            }
+                          },
+                          "date": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2024-08-26T15:30:00Z"
+                          },
+                          "price": {
+                            "type": "number",
+                            "format": "float",
+                            "example": 100
+                          },
+                          "sale_discount_percentage": {
+                            "type": "number",
+                            "format": "float",
+                            "example": 5
+                          },
+                          "sale_discount_price": {
+                            "type": "number",
+                            "format": "float",
+                            "example": 95
+                          },
+                          "sale_discount_description": {
+                            "type": "string",
+                            "example": "5% off on total sale"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access if authentication is required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "UNAUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "INTERNAL SERVER ERROR"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales/revenue": {
+      "get": {
+        "tags": [
+          "Sales"
+        ],
+        "summary": "Retrieve total sales revenue by day, week, month, and year",
+        "description": "Returns a report of total sales revenue for the current day, week, month, and year.",
+        "responses": {
+          "200": {
+            "description": "A report of total sales revenue categorized by day, week, month, and year",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "THIS_DAY_REVENUE": {
+                      "type": "integer",
+                      "example": 1500
+                    },
+                    "THIS_WEEK_REVENUE": {
+                      "type": "integer",
+                      "example": 10500
+                    },
+                    "THIS_MONTH_REVENUE": {
+                      "type": "integer",
+                      "example": 45000
+                    },
+                    "THIS_YEAR_REVENUE": {
+                      "type": "integer",
+                      "example": 540000
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access if authentication is required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "UNAUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "INTERNAL SERVER ERROR"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales/top-products": {
+      "get": {
+        "tags": [
+          "Sales"
+        ],
+        "summary": "Retrieve the top three products by sales for different time periods",
+        "description": "Returns a report of the top three products with the highest sales for today, this week, this month, this year, and all time.",
+        "responses": {
+          "200": {
+            "description": "A report of the top three products with the highest sales for various periods",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "REPORT": {
+                      "type": "object",
+                      "properties": {
+                        "TODAY": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "example": "Product A"
+                              },
+                              "total_quantity": {
+                                "type": "integer",
+                                "example": 150
+                              }
+                            }
+                          }
+                        },
+                        "WEEK": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "example": "Product B"
+                              },
+                              "total_quantity": {
+                                "type": "integer",
+                                "example": 700
+                              }
+                            }
+                          }
+                        },
+                        "MONTH": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "example": "Product C"
+                              },
+                              "total_quantity": {
+                                "type": "integer",
+                                "example": 3200
+                              }
+                            }
+                          }
+                        },
+                        "YEAR": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "example": "Product D"
+                              },
+                              "total_quantity": {
+                                "type": "integer",
+                                "example": 15000
+                              }
+                            }
+                          }
+                        },
+                        "ALL_TIME": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "example": "Product E"
+                              },
+                              "total_quantity": {
+                                "type": "integer",
+                                "example": 50000
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access if authentication is required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "UNAUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "INTERNAL SERVER ERROR"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales/top-selling-days": {
+      "get": {
+        "tags": [
+          "Sales"
+        ],
+        "summary": "Retrieve the top two selling days for different time periods",
+        "description": "Returns a report of the top two days with the highest sales for this week, month, year, and all time.",
+        "responses": {
+          "200": {
+            "description": "A report of the top two selling days by sales for various periods",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "REPORT": {
+                      "type": "object",
+                      "properties": {
+                        "WEEK": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "sale_date": {
+                                "type": "string",
+                                "format": "date",
+                                "example": "2024-08-01"
+                              },
+                              "total_price": {
+                                "type": "number",
+                                "format": "float",
+                                "example": 2000
+                              }
+                            }
+                          }
+                        },
+                        "MONTH": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "sale_date": {
+                                "type": "string",
+                                "format": "date",
+                                "example": "2024-08-15"
+                              },
+                              "total_price": {
+                                "type": "number",
+                                "format": "float",
+                                "example": 3500
+                              }
+                            }
+                          }
+                        },
+                        "YEAR": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "sale_date": {
+                                "type": "string",
+                                "format": "date",
+                                "example": "2024-07-25"
+                              },
+                              "total_price": {
+                                "type": "number",
+                                "format": "float",
+                                "example": 5000
+                              }
+                            }
+                          }
+                        },
+                        "ALL_TIME": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "sale_date": {
+                                "type": "string",
+                                "format": "date",
+                                "example": "2023-12-31"
+                              },
+                              "total_price": {
+                                "type": "number",
+                                "format": "float",
+                                "example": 10000
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access if authentication is required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "UNAUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "INTERNAL SERVER ERROR"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales/most-selling-hours": {
+      "get": {
+        "tags": [
+          "Sales"
+        ],
+        "summary": "Retrieve the most selling hours for different time periods",
+        "description": "Returns a report of the hours with the highest sales for today, this week, this month, this year, and all time.",
+        "responses": {
+          "200": {
+            "description": "A report of the most selling hours by sales for various periods",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "REPORT": {
+                      "type": "object",
+                      "properties": {
+                        "TODAY": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "hour": {
+                                "type": "string",
+                                "example": "2pm"
+                              },
+                              "total_price": {
+                                "type": "number",
+                                "format": "float",
+                                "example": 500
+                              }
+                            }
+                          }
+                        },
+                        "WEEK": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "hour": {
+                                "type": "string",
+                                "example": "3pm"
+                              },
+                              "total_price": {
+                                "type": "number",
+                                "format": "float",
+                                "example": 1200
+                              }
+                            }
+                          }
+                        },
+                        "MONTH": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "hour": {
+                                "type": "string",
+                                "example": "5pm"
+                              },
+                              "total_price": {
+                                "type": "number",
+                                "format": "float",
+                                "example": 2500
+                              }
+                            }
+                          }
+                        },
+                        "YEAR": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "hour": {
+                                "type": "string",
+                                "example": "7pm"
+                              },
+                              "total_price": {
+                                "type": "number",
+                                "format": "float",
+                                "example": 4000
+                              }
+                            }
+                          }
+                        },
+                        "ALL_TIME": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "hour": {
+                                "type": "string",
+                                "example": "9am"
+                              },
+                              "total_price": {
+                                "type": "number",
+                                "format": "float",
+                                "example": 6000
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access if authentication is required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "UNAUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "INTERNAL SERVER ERROR"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales/delta-percentage": {
+      "get": {
+        "tags": [
+          "Sales"
+        ],
+        "summary": "Retrieve the percentage change in sales by month",
+        "description": "Returns the percentage change in sales for each month.",
+        "responses": {
+          "200": {
+            "description": "A report of the percentage change in sales by month",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "SALES PERCENTAGE DELTA": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "January - February": {
+                            "type": "string",
+                            "example": "10.00%"
+                          },
+                          "February - March": {
+                            "type": "string",
+                            "example": "5.00%"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access if authentication is required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "UNAUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "INTERNAL SERVER ERROR"
                     }
                   }
                 }
