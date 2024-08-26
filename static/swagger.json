@@ -30,6 +30,10 @@
     {
       "name": "Orders",
       "description": "All functionalities related to orders"
+    },
+    {
+      "name": "Products",
+      "description": "All functionalitirs realted to product management"
     }
   ],
   "paths": {
@@ -811,6 +815,688 @@
                     "ERROR": {
                       "type": "string",
                       "example": "INTERNAL SERVER ERROR"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/list": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "get the list of all products",
+        "description": "Get the list of all products in the database where product and category both toggles are 'on'.",
+        "operationId": "getListOfAllProducts",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "description": "page number to get products using pagination (by default page = 0, and limit = 20 (limit can't be changed by parameters))"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "LIST OF ALL THE AVAIABLE PRODUCTS",
+            "content": {
+              "json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "PRODUCTS": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "product_id": {
+                            "type": "integer",
+                            "example": 2
+                          },
+                          "product_name": {
+                            "type": "string",
+                            "example": "myproduct"
+                          },
+                          "category_name": {
+                            "type": "string",
+                            "example": "mycategory"
+                          },
+                          "product_price": {
+                            "type": "number",
+                            "example": 300
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "PRODUCTS": [
+                      {
+                        "product_id": 2,
+                        "product_name": "myproduct",
+                        "category_name": "mycategory",
+                        "product_price": 300
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/add": {
+      "post": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Add a new product to the database",
+        "description": "Add a new product to the database by providing the category name, product name, and price.",
+        "operationId": "addProduct",
+        "requestBody": {
+          "description": "The product details to be added",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "category_name": {
+                    "type": "string",
+                    "example": "Electronics",
+                    "description": "The name of the category the product belongs to"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "Smartphone",
+                    "description": "The name of the product"
+                  },
+                  "price": {
+                    "type": "integer",
+                    "example": 499,
+                    "description": "The price of the product"
+                  }
+                },
+                "required": [
+                  "category_name",
+                  "name",
+                  "price"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Product added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "MESSAGE": {
+                      "type": "string",
+                      "example": "PRODUCT HAS BEEN ADDED SUCCESSFULLY"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, invalid JSON or parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "ONLY JSON DICTIONARY/HASHMAP IS ALLOWED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized or error with parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "ERROR WITH THE PARAMETERS OR PRODUCT ALREADY EXISTS"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/delete": {
+      "delete": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Delete a product from the database",
+        "description": "Delete a product from the database by providing the product's name.",
+        "requestBody": {
+          "description": "The product details required to delete the product",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Smartphone",
+                    "description": "The name of the product to delete"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Product deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "MESSAGE": {
+                      "type": "string",
+                      "example": "PRODUCT HAS BEEN DELETED SUCCESSFULLY"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, invalid JSON or parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "ONLY JSON DICTIONARY/HASHMAP IS ALLOWED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized or missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "UNAUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found in the database",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "PRODUCT NOT FOUND"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "INTERNAL SERVER ERROR"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/toggle": {
+      "patch": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Toggle the availability of a product (on/off)",
+        "description": "Toggle the availability status of a product by its name.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "product",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Smartphone"
+            },
+            "description": "The name of the product to toggle availability."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product toggle updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "MESSAGE": {
+                      "type": "string",
+                      "example": "PRODUCT TOGGLE UPDATED SUCCESSFULLY"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found in the database",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "PRODUCT NOT FOUND"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "INTERNAL SERVER ERROR"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/get-by-category": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Retrieve products by category",
+        "description": "Retrieve a list of products that belong to the specified category.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "category",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Electronics"
+            },
+            "description": "The name of the category to filter products by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Products retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Category": {
+                      "type": "string",
+                      "example": "Electronics"
+                    },
+                    "products": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "example": "Smartphone"
+                          },
+                          "price": {
+                            "type": "integer",
+                            "example": 299
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No category was provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "NO CATEGORY WAS PROVIDED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No category found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "NO CATEGORY FOUND"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/get-by-price-range": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Retrieve products within a specific price range",
+        "description": "Retrieve a list of products that fall within the specified price range.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "start",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 100
+            },
+            "description": "The starting price of the range."
+          },
+          {
+            "in": "query",
+            "name": "range",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 500
+            },
+            "description": "The ending price of the range."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Products retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "products": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "example": "Laptop"
+                          },
+                          "price": {
+                            "type": "integer",
+                            "example": 499
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "INVALID PARAMETERS"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/upload-image/{product_name}": {
+      "put": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Upload or update the image for a specific product",
+        "description": "Uploads or updates the image associated with a product identified by its name. Supports JPG and PNG file formats.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the product to associate with the image."
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The image file to upload. Must be a JPG or PNG."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Image successfully uploaded or updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "MESSAGE": {
+                      "type": "string",
+                      "example": "IMAGE HAS BEEN ADDED/UPDATED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid file type or bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "FILE TYPE NOT SUPPORTED. (JPG OR PNG)"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "NO PRODUCT FOUND"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "INTERNAL SERVER ERROR"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/image/{product_name}": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Retrieve the image associated with a specific product",
+        "description": "Retrieves the image file associated with a product identified by its name. Returns a 404 error if the product or image is not found.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the product to retrieve the image for."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The image file of the specified product",
+            "content": {
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access if authentication is required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "UNAUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product or image not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ERROR": {
+                      "type": "string",
+                      "example": "'PRODUCT NOT FOUND' or 'IMAGE NOT FOUND'"
                     }
                   }
                 }
