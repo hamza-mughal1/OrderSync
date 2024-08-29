@@ -137,5 +137,7 @@ INSERT INTO endpoints (endpoint, method, role) VALUES
 ("/products/upload-image/<product_name>","GET","[1]"),
 ("/products/image/<product_name>","GET","[1]"),
 ("/users/users","POST","[1]"),
-("/users/users","DELETE","[1]");
+("/users/users","DELETE","[1]"),
+("/admin/categories","POST","[1]"),
+("/admin/categories","DELETE","[1]");
 
