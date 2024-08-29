@@ -268,6 +268,83 @@ class AdminModel:
 
         return make_response({"MESSAGE": "'ROLE' HAS BEEN DELETED SUCCESSFULLY"}, 200)
 
+    def create_category(self, category_data):
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
+        re_fields = {
+            "category_name": "--",
+        }
+
+        if not type(category_data) == dict:
+            return make_response(
+                {"ERROR": "ONLY JSON/DICTIONARY/HASHMAP IS ALLOWED"}, 400
+            )
+
+        if not AdminModel.has_required_pairs(category_data, re_fields):
+            return make_response({"ERROR": "UNAUTHORIZED"}, 401)
+
+        self.mycursor.execute("INSERT INTO categories (name) VALUES (%s)", (category_data["category_name"]))
+
+        return make_response({"MESSAGE": "'category' HAS BEEN ADDED SUCCESSFULLY"}, 201)
+
+    def delete_category(self, category_data):
+        self.mycursor.close()
+        self.db.reconnect()
+        self.mycursor = self.db.cursor(dictionary=True)
+        re_fields = {
+            "category_name": "--",
+        }
+
+        if not type(category_data) == dict:
+            return make_response(
+                {"ERROR": "ONLY JSON/DICTIONARY/HASHMAP IS ALLOWED"}, 400
+            )
+
+        if not AdminModel.has_required_pairs(category_data, re_fields):
+            return make_response({"ERROR": "UNAUTHORIZED"}, 401)
+        
+    
+        self.mycursor.execute("SELECT id FROM categories WHERE name = %s", (category_data["category_name"],))
+        if len(data := self.mycursor.fetchall()) < 1:
+            return make_response({"ERROR":"NO CATEGORY FOUND"}, 404)
+        self.mycursor.execute("SELECT id FROM products WHERE category_id = %s",(data[0]["id"],))
+        for i in self.mycursor.fetchall():
+            try:
+                self.mycursor.execute(
+                    "SELECT sale_id, price, discount_price FROM sale_details where product_id = %s",
+                    (i["id"],),
+                )
+                result = self.mycursor.fetchall()
+                self.mycursor.execute(
+                    "DELETE FROM sale_details WHERE product_id = %s", (id,)
+                )
+                for i in result:
+                    self.mycursor.execute(
+                        "UPDATE sales SET price = price - %s where id = %s",
+                        (i["price"], i["sale_id"]),
+                    )
+                    self.db.commit()
+                    self.mycursor.execute(
+                        "SELECT price, discount from sales where id = %s", (i[0],)
+                    )
+                    price = self.mycursor.fetchall()[0]["price"]
+                    discount_per = self.mycursor.fetchall()[0]["discount"]
+                    discount_price = price * (discount_per / 100)
+                    self.mycursor.execute(
+                        "UPDATE sales SET discount_price = %s where id = %s",
+                        (discount_price, i[0]),
+                    )
+                    self.db.commit()
+            except:
+                return make_response({"ERROR": "INTERNAL SERVER ERROR"}, 500)
+            self.mycursor.execute("DELETE FROM products WHERE id = %s", (id,))
+            self.db.commit()
+        self.mycursor.execute("DELETE from categories WHERE id = %s", (data[0]["id"],))
+        self.db.commit()
+        return make_response({"MESSAGE":"CATEGORY HAS BEEN DELETED SUCCESSFULLY"}, 200)
+
+
     # -----------------------
     # NO PURPOSE TO USE
     # -----------------------
