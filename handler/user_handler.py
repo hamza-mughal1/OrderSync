@@ -2,7 +2,7 @@ from app import app
 from flask import request, make_response
 from model.user_model import UserModel
 from model.auth_model import AuthModel
-
+from app import limiter
 # Initialize instances of the user and authentication models
 user_model = UserModel()
 auth_model = AuthModel()
@@ -10,6 +10,7 @@ auth_model = AuthModel()
 
 # Route to handle user login requests
 @app.route("/users/login", methods=["POST"])
+@limiter.limit("10 per minute")
 def user_login():
     # Verify the user's credentials using data from the request and return a response
     return user_model.verify_user(request.json)
@@ -17,6 +18,7 @@ def user_login():
 
 # Route to handle JWT refresh requests
 @app.route("/users/refresh", methods=["POST"])
+@limiter.limit("10 per minute")
 def refresh_jwt():
     # Refresh the JWT token for the user
     return user_model.refresh_jwt()
@@ -24,6 +26,7 @@ def refresh_jwt():
 
 # Route to handle user logout requests
 @app.route("/users/logout", methods=["POST"])
+@limiter.limit("10 per minute")
 def logout():
     # Log out the current user
     return user_model.logout()
@@ -31,6 +34,7 @@ def logout():
 
 # Route to handle logout requests for all sessions
 @app.route("/users/logout-all", methods=["POST"])
+@limiter.limit("10 per minute")
 def logout_all():
     # Log out the user from all active sessions
     return user_model.logout_all()
@@ -38,6 +42,7 @@ def logout_all():
 
 # Route to handle user creation requests
 @app.route("/users/users", methods=["POST"])
+@limiter.limit("10 per minute")
 @auth_model.token_auth()  # Requires token authentication
 def create_user():
     # Create a new user using data from the request
@@ -46,6 +51,7 @@ def create_user():
 
 # Route to handle user deletion requests
 @app.route("/users/users", methods=["DELETE"])
+@limiter.limit("10 per minute")
 @auth_model.token_auth()  # Requires token authentication
 def delete_user():
     # Delete a user using data from the request

@@ -1,8 +1,16 @@
 from flask import Flask
 from flask_swagger_ui import get_swaggerui_blueprint
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
 
 # Create the Flask application instance
 app = Flask(__name__)
+limiter = Limiter(
+    get_remote_address,
+    app=app
+)
+
 
 
 SWAGGER_URL = "/api/docs"  # URL for exposing Swagger UI (without trailing '/')
